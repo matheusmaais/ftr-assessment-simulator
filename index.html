@@ -493,6 +493,29 @@
         gap: 10px;
       }
 
+      .assessment-exemplo {
+        border: 1px solid #9fd0c8;
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(233, 246, 243, 0.92), rgba(255, 255, 255, 0.96)),
+          #ffffff;
+        padding: 14px;
+        display: grid;
+        gap: 10px;
+        box-shadow: var(--sombra-suave);
+      }
+
+      .assessment-exemplo h4 {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .assessment-exemplo p {
+        margin: 0;
+        color: var(--texto-suave);
+        font-size: 0.86rem;
+      }
+
       .cenario {
         min-height: 64px;
         width: 100%;
@@ -757,6 +780,39 @@
         font-size: 0.83rem;
       }
 
+      .findings {
+        display: grid;
+        gap: 10px;
+      }
+
+      .finding {
+        border: 1px solid var(--linha);
+        border-radius: 8px;
+        background: linear-gradient(180deg, #ffffff, #f8fbfd);
+        padding: 13px;
+        display: grid;
+        gap: 9px;
+        box-shadow: 0 8px 20px rgba(20, 32, 46, 0.06);
+      }
+
+      .finding-topo {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .finding h4 {
+        margin: 0;
+        font-size: 0.96rem;
+      }
+
+      .finding p {
+        margin: 0;
+        color: var(--texto-suave);
+        font-size: 0.84rem;
+      }
+
       .cta-proximo-passo {
         border: 1px solid #a8d3cb;
         border-radius: 8px;
@@ -985,6 +1041,10 @@
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
+      }
+
+      .metadados.contexto-assessment {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .metadados div {
@@ -1297,6 +1357,13 @@
                 <div class="notas">
                   <h4>Cenários rápidos para a reunião</h4>
                   <div class="selo-simulacao">Cenários ilustrativos: servem para demonstrar o fluxo, não representam evidências reais.</div>
+                  <div class="assessment-exemplo">
+                    <h4>Assessment completo de exemplo</h4>
+                    <p>Carrega um caso fictício com cliente, escopo, evidências recebidas, hipóteses, gaps e relatório final.</p>
+                    <button class="botao-primario" data-assessment="saas-partner-hosted">
+                      Carregar assessment completo
+                    </button>
+                  </div>
                   <div class="cenarios">
                     <button class="cenario" data-cenario="partner-maduro">
                       <strong>Partner Hosted maduro</strong>
@@ -1361,8 +1428,17 @@
                 <p id="subtituloRelatorio">Snapshot de readiness para discussão.</p>
               </div>
               <div class="corpo-painel relatorio">
+                <div class="selo-simulacao" id="avisoAssessmentExemplo" hidden>
+                  Assessment fictício carregado para demonstração. Não representa evidência real de cliente.
+                </div>
+                <div class="metadados contexto-assessment" id="contextoAssessment" hidden></div>
                 <div class="resumo-executivo" id="resumoExecutivo"></div>
                 <div class="placar" id="placar"></div>
+                <div class="notas" id="secaoFindings" hidden>
+                  <h4>Findings simulados do assessment</h4>
+                  <div class="selo-simulacao">Findings fictícios para demonstrar o formato de saída. Não vieram de scan real.</div>
+                  <div class="findings" id="listaFindings"></div>
+                </div>
                 <div class="relatorio" id="listaRelatorio"></div>
               </div>
             </div>
@@ -1608,6 +1684,81 @@
         },
       };
 
+      const assessmentsMockados = {
+        "saas-partner-hosted": {
+          caminho: "partner",
+          nome: "CloudBilling Pro",
+          modelo: "saas",
+          escopo: "parcial",
+          maturidade: "mista",
+          cliente: "Cliente fictício: SaaS B2B de billing",
+          tipo: "Partner Hosted",
+          escopoNarrativo: "2 contas AWS, 2 regiões, workload SaaS multi-tenant e API pública.",
+          evidenciasRecebidas: [
+            "Diagrama de arquitetura de alto nível",
+            "Lista preliminar de contas e regiões",
+            "Política de backup em rascunho",
+            "Descrição de logging operacional",
+          ],
+          hipoteses: [
+            "Security Hub/CIS ainda não foi exportado para o escopo completo",
+            "Criptografia existe em parte dos recursos, mas não há snapshot consolidado",
+            "Backup policy não está vinculada a todos os componentes críticos",
+          ],
+          observacao:
+            "Caso fictício para demonstrar uma conversa realista: existe material suficiente para começar, mas ainda há gaps antes de tratar como pronto para revisão.",
+          findings: [
+            {
+              id: "FTR-MOCK-001",
+              titulo: "Security Hub/CIS sem export recente para todo o escopo",
+              controle: "Postura CIS ou Security Hub",
+              severidade: "bloqueador",
+              evidencia: "Cliente informou que existe Security Hub, mas não anexou export com timestamp e cobertura das duas contas.",
+              impacto: "Reviewer pode rejeitar ou devolver o assessment por falta de evidência técnica atualizada.",
+              recomendacao: "Gerar export do Security Hub/CIS para as contas e regiões declaradas e anexar metadados de cobertura.",
+              dono: "Cliente técnico",
+            },
+            {
+              id: "FTR-MOCK-002",
+              titulo: "Escopo AWS ainda parcial",
+              controle: "Escopo AWS declarado",
+              severidade: "alto",
+              evidencia: "Há lista preliminar de contas, mas exclusões e workloads auxiliares ainda não estão documentados.",
+              impacto: "A cobertura declarada pode parecer maior do que a evidência realmente suporta.",
+              recomendacao: "Confirmar contas, regiões, workloads, integrações externas e exclusões antes de revisar os controles.",
+              dono: "Cliente + Consultoria",
+            },
+            {
+              id: "FTR-MOCK-003",
+              titulo: "Criptografia e backup sem vínculo com componentes críticos",
+              controle: "Proteção de dados",
+              severidade: "alto",
+              evidencia: "Existe política de backup em rascunho, mas não há snapshot ou matriz ligando backup/encryption aos componentes do workload.",
+              impacto: "A evidência processual pode não ser suficiente para sustentar readiness técnica.",
+              recomendacao: "Mapear componentes críticos e anexar evidência de criptografia, retenção e backup por componente.",
+              dono: "Cliente técnico",
+            },
+            {
+              id: "FTR-MOCK-004",
+              titulo: "Logging descrito, mas sem evidência de retenção",
+              controle: "Baseline de auditoria e logs",
+              severidade: "medio",
+              evidencia: "Descrição operacional menciona logs e trilhas de auditoria, mas a retenção não foi comprovada.",
+              impacto: "Pode virar pergunta de follow-up do reviewer, mesmo que não seja bloqueador inicial.",
+              recomendacao: "Anexar configuração de retenção e exemplo de trilha operacional para o workload em escopo.",
+              dono: "Cliente técnico",
+            },
+          ],
+          respostas: {
+            "ph-escopo": "desconhecido",
+            "ph-cis": "nao",
+            "ph-logs": "sim",
+            "ph-dados": "desconhecido",
+            "ph-diagrama": "sim",
+          },
+        },
+      };
+
       const estado = {
         tela: "intake",
         caminho: "partner",
@@ -1616,6 +1767,7 @@
         guiaAtivo: false,
         passoGuia: 0,
         suprimirAjudaFoco: "",
+        assessmentAtivo: null,
       };
 
       const $ = (seletor) => document.querySelector(seletor);
@@ -1952,12 +2104,55 @@
 
       function renderizarContexto() {
         const nomeCaminho = estado.caminho === "partner" ? "Partner Hosted" : "Service Offering";
+        const assessment = estado.assessmentAtivo ? assessmentsMockados[estado.assessmentAtivo] : null;
         $("#resumoContexto").innerHTML = `
           <div><strong>Solução</strong><br>${$("#nomeSolucao").value || "Não informada"}</div>
           <div><strong>Tipo de FTR</strong><br>${nomeCaminho}</div>
           <div><strong>Modelo</strong><br>${textoSelecionado("modeloSolucao")}</div>
           <div><strong>Escopo</strong><br>${textoSelecionado("escopoDeclarado")}</div>
         `;
+        $("#avisoAssessmentExemplo").hidden = !assessment;
+        $("#contextoAssessment").hidden = !assessment;
+        if (assessment) {
+          $("#contextoAssessment").innerHTML = `
+            <div><strong>Cliente</strong><br>${assessment.cliente}</div>
+            <div><strong>Escopo narrativo</strong><br>${assessment.escopoNarrativo}</div>
+            <div><strong>Observação</strong><br>${assessment.observacao}</div>
+            <div><strong>Evidências recebidas</strong><br>${assessment.evidenciasRecebidas.join("<br>")}</div>
+            <div><strong>Hipóteses da simulação</strong><br>${assessment.hipoteses.join("<br>")}</div>
+            <div><strong>Tipo do exemplo</strong><br>${assessment.tipo}</div>
+          `;
+        }
+      }
+
+      function renderizarFindings() {
+        const assessment = estado.assessmentAtivo ? assessmentsMockados[estado.assessmentAtivo] : null;
+        $("#secaoFindings").hidden = !assessment?.findings?.length;
+        if (!assessment?.findings?.length) {
+          $("#listaFindings").innerHTML = "";
+          return;
+        }
+        $("#listaFindings").innerHTML = assessment.findings
+          .map(
+            (finding) => `
+              <article class="finding">
+                <div class="finding-topo">
+                  <div>
+                    <h4>${finding.id} · ${finding.titulo}</h4>
+                    <p>${finding.controle}</p>
+                  </div>
+                  <span class="prioridade ${finding.severidade}">${rotulosPrioridade[finding.severidade] || finding.severidade}</span>
+                </div>
+                <div class="metadados">
+                  <div><strong>Evidência simulada</strong><br>${finding.evidencia}</div>
+                  <div><strong>Impacto</strong><br>${finding.impacto}</div>
+                  <div><strong>Recomendação</strong><br>${finding.recomendacao}</div>
+                  <div><strong>Dono sugerido</strong><br>${finding.dono}</div>
+                </div>
+              </article>
+            `,
+          )
+          .join("");
       }
 
       function renderizarRelatorio() {
@@ -2049,12 +2244,14 @@
         renderizarChecks();
         renderizarContexto();
         renderizarRelatorio();
+        renderizarFindings();
         atualizarValidacao();
       }
 
       function aplicarCenario(id) {
         const cenario = cenarios[id];
         if (!cenario) return;
+        estado.assessmentAtivo = null;
         $("#nomeSolucao").value = cenario.nome;
         $("#modeloSolucao").value = cenario.modelo;
         $("#escopoDeclarado").value = cenario.escopo;
@@ -2067,10 +2264,27 @@
         renderizar();
       }
 
+      function carregarAssessmentMockado(id) {
+        const assessment = assessmentsMockados[id];
+        if (!assessment) return;
+        estado.assessmentAtivo = id;
+        $("#nomeSolucao").value = assessment.nome;
+        $("#modeloSolucao").value = assessment.modelo;
+        $("#escopoDeclarado").value = assessment.escopo;
+        $("#maturidadeEvidencia").value = assessment.maturidade;
+        guia.forEach((item) => estado.preenchidos.add(item.id));
+        definirCaminho(assessment.caminho);
+        estado.respostas[assessment.caminho] = { ...assessment.respostas };
+        estado.guiaAtivo = false;
+        fecharModal();
+        renderizar();
+      }
+
       function resumoMarkdown() {
         const itens = resultados();
         const resumo = calcularResumo(itens);
         const nomeCaminho = estado.caminho === "partner" ? "Partner Hosted" : "Service Offering";
+        const assessment = estado.assessmentAtivo ? assessmentsMockados[estado.assessmentAtivo] : null;
         const linhas = [
           `# Relatório de gaps simulado - ${$("#nomeSolucao").value || "Solução não informada"}`,
           "",
@@ -2084,6 +2298,27 @@
           `Recomendação: ${resumo.recomendacao}`,
           `Próximo passo recomendado: ${resumo.proximoPasso}`,
           "",
+          ...(assessment
+            ? [
+                "## Contexto do assessment fictício",
+                `Cliente: ${assessment.cliente}`,
+                `Escopo narrativo: ${assessment.escopoNarrativo}`,
+                `Observação: ${assessment.observacao}`,
+                "",
+                "### Evidências recebidas",
+                ...assessment.evidenciasRecebidas.map((item) => `- ${item}`),
+                "",
+                "### Hipóteses da simulação",
+                ...assessment.hipoteses.map((item) => `- ${item}`),
+                "",
+                "## Findings simulados",
+                ...assessment.findings.map(
+                  (finding) =>
+                    `- ${finding.id}: ${finding.titulo} | severidade: ${rotulosPrioridade[finding.severidade] || finding.severidade} | controle: ${finding.controle} | dono: ${finding.dono} | recomendação: ${finding.recomendacao}`,
+                ),
+                "",
+              ]
+            : []),
           "## Controles",
           ...itens.map(
             (item) =>
@@ -2144,6 +2379,7 @@
         if (botao.dataset.caminho) definirCaminho(botao.dataset.caminho);
         if (botao.dataset.ajuda) abrirModal(botao.dataset.ajuda, false);
         if (botao.dataset.cenario) aplicarCenario(botao.dataset.cenario);
+        if (botao.dataset.assessment) carregarAssessmentMockado(botao.dataset.assessment);
         if (botao.dataset.check) {
           estado.respostas[estado.caminho][botao.dataset.check] = botao.dataset.valor;
           renderizar();
@@ -2196,6 +2432,7 @@
         estado.respostas.partner = respostasPadrao("partner");
         estado.respostas.service = respostasPadrao("service");
         estado.guiaAtivo = false;
+        estado.assessmentAtivo = null;
         definirCaminho("partner");
         definirTela("intake");
       });
