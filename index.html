@@ -527,6 +527,103 @@
         margin-top: 3px;
       }
 
+      .scan-preview {
+        border: 1px solid #d5e0ea;
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 12px;
+        display: grid;
+        gap: 11px;
+      }
+
+      .scan-preview-cabecalho {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .scan-preview-cabecalho strong {
+        display: block;
+        font-size: 0.9rem;
+      }
+
+      .scan-preview-cabecalho span {
+        color: var(--texto-suave);
+        font-size: 0.78rem;
+        font-weight: 720;
+      }
+
+      .scan-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .scan-kpi {
+        border: 1px solid #e0e7ee;
+        border-radius: 8px;
+        background: #f8fafc;
+        padding: 9px;
+      }
+
+      .scan-kpi strong {
+        display: block;
+        font-size: 1.22rem;
+        line-height: 1;
+      }
+
+      .scan-kpi span {
+        display: block;
+        margin-top: 4px;
+        color: var(--texto-suave);
+        font-size: 0.72rem;
+        font-weight: 760;
+      }
+
+      .recurso-lista,
+      .finding-mini-lista {
+        display: grid;
+        gap: 7px;
+      }
+
+      .recurso-mini,
+      .finding-mini {
+        border: 1px solid #e3eaf0;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #ffffff, #f8fbfd);
+        padding: 9px;
+        display: grid;
+        gap: 3px;
+      }
+
+      .recurso-mini strong,
+      .finding-mini strong {
+        font-size: 0.83rem;
+      }
+
+      .recurso-mini span,
+      .finding-mini span {
+        color: var(--texto-suave);
+        font-size: 0.76rem;
+      }
+
+      .finding-mini {
+        border-left-width: 4px;
+      }
+
+      .finding-mini.bloqueador {
+        border-left-color: var(--vermelho);
+      }
+
+      .finding-mini.alto {
+        border-left-color: var(--amarelo);
+      }
+
+      .finding-mini.medio {
+        border-left-color: var(--neutro);
+      }
+
       .cenario {
         min-height: 64px;
         width: 100%;
@@ -1183,6 +1280,7 @@
         .segmentado,
         .resumo-caminhos,
         .resumo-executivo,
+        .scan-kpis,
         .placar,
         .metadados,
         .opcoes-check {
@@ -1381,6 +1479,64 @@
                     </ul>
                     <button class="botao-primario" data-assessment="saas-partner-hosted">
                       Carregar assessment fictício completo
+                    </button>
+                  </div>
+                  <div class="assessment-exemplo">
+                    <h4>Assessment automatizado mockado de conta AWS</h4>
+                    <p>
+                      Este exemplo simula o resultado de um scan read-only em uma conta AWS fictícia. Ele mostra
+                      inventário, fontes de evidência e findings técnicos como se a ferramenta tivesse coletado snapshots.
+                    </p>
+                    <ul>
+                      <li><strong>Não executa AWS API real</strong> e não usa credenciais.</li>
+                      <li>Conta fictícia: 123456789012, regiões us-east-1 e sa-east-1.</li>
+                      <li>Inclui findings mockados de S3, CloudTrail, Security Hub, IAM, KMS e backup.</li>
+                    </ul>
+                    <div class="scan-preview" aria-label="Prévia do scan AWS mockado">
+                      <div class="scan-preview-cabecalho">
+                        <div>
+                          <strong>Prévia da tela de findings</strong>
+                          <span>Conta AWS fictícia · scan read-only simulado</span>
+                        </div>
+                        <span class="prioridade bloqueador">2 bloqueadores</span>
+                      </div>
+                      <div class="scan-kpis">
+                        <div class="scan-kpi"><strong>12</strong><span>buckets S3</span></div>
+                        <div class="scan-kpi"><strong>3</strong><span>trails</span></div>
+                        <div class="scan-kpi"><strong>18</strong><span>findings Security Hub</span></div>
+                        <div class="scan-kpi"><strong>6</strong><span>achados priorizados</span></div>
+                      </div>
+                      <div class="recurso-lista">
+                        <div class="recurso-mini">
+                          <strong>s3://cbp-prod-artifacts-123456789012</strong>
+                          <span>Block Public Access incompleto · região us-east-1 · recurso fictício</span>
+                        </div>
+                        <div class="recurso-mini">
+                          <strong>cloudtrail/org-main-trail</strong>
+                          <span>Trail single-region · região us-east-1 · eventos de sa-east-1 descobertos fora da cobertura</span>
+                        </div>
+                        <div class="recurso-mini">
+                          <strong>rds:cbp-prod-primary</strong>
+                          <span>Sem recovery point recente no snapshot mockado de AWS Backup</span>
+                        </div>
+                      </div>
+                      <div class="finding-mini-lista">
+                        <div class="finding-mini bloqueador">
+                          <strong>AWS-MOCK-001 · CloudTrail não multi-region</strong>
+                          <span>Evidência simulada: eventos de sa-east-1 não cobertos pela trail principal.</span>
+                        </div>
+                        <div class="finding-mini alto">
+                          <strong>AWS-MOCK-002 · S3 Block Public Access incompleto</strong>
+                          <span>Evidência simulada: BlockPublicPolicy=false em bucket de artefatos.</span>
+                        </div>
+                        <div class="finding-mini alto">
+                          <strong>AWS-MOCK-005 · Backup não cobre banco principal</strong>
+                          <span>Evidência simulada: RDS principal sem recovery point recente.</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button class="botao-primario" data-assessment="aws-account-scan" data-abrir-relatorio="true">
+                      Abrir tela completa de findings
                     </button>
                   </div>
                   <div class="cenarios">
@@ -1774,6 +1930,104 @@
             "ph-logs": "sim",
             "ph-dados": "desconhecido",
             "ph-diagrama": "sim",
+          },
+        },
+        "aws-account-scan": {
+          caminho: "partner",
+          nome: "Conta AWS 123456789012 - Assessment Automatizado Mockado",
+          modelo: "saas",
+          escopo: "claro",
+          maturidade: "mista",
+          cliente: "Conta AWS fictícia: 123456789012",
+          tipo: "Assessment automatizado mockado de conta AWS",
+          escopoNarrativo:
+            "Conta 123456789012, regiões us-east-1 e sa-east-1, workload SaaS web/API, recursos S3, CloudTrail, IAM, KMS, backup e Security Hub simulados.",
+          evidenciasRecebidas: [
+            "Snapshot simulado de S3: 12 buckets avaliados",
+            "Snapshot simulado de CloudTrail: 3 trails avaliadas",
+            "Snapshot simulado de IAM: usuários, roles e políticas gerenciadas",
+            "Snapshot simulado de KMS/EBS/RDS: recursos com e sem criptografia",
+            "Security Hub simulado: 18 findings importados",
+            "Inventário simulado de AWS Backup: vaults, planos e recovery points",
+          ],
+          hipoteses: [
+            "Dados abaixo são mockados e não vieram de AWS API",
+            "IDs de conta, recursos, usuários e aliases são fictícios",
+            "Status indica como a ferramenta apresentaria achados, não o estado real de nenhuma conta",
+          ],
+          observacao:
+            "Tela demonstrativa para o cliente ver o resultado esperado de um assessment automatizado: inventário coletado, evidências normalizadas e findings priorizados.",
+          findings: [
+            {
+              id: "AWS-MOCK-001",
+              titulo: "CloudTrail não multi-region em conta de produção",
+              controle: "Baseline de auditoria e logs",
+              severidade: "bloqueador",
+              evidencia:
+                "Trail fictícia `org-main-trail` aparece como single-region em `us-east-1`; eventos de `sa-east-1` não estão cobertos no snapshot simulado.",
+              impacto: "Perda de cobertura de auditoria para recursos fora de us-east-1.",
+              recomendacao: "Habilitar multi-region trail ou comprovar cobertura equivalente por conta/região.",
+              dono: "Cliente técnico",
+            },
+            {
+              id: "AWS-MOCK-002",
+              titulo: "Bucket S3 com Block Public Access incompleto",
+              controle: "Proteção de dados",
+              severidade: "alto",
+              evidencia:
+                "Bucket fictício `cbp-prod-artifacts-123456789012` com `BlockPublicPolicy=false` no snapshot simulado.",
+              impacto: "Risco de política pública acidental e evidência insuficiente de baseline de proteção.",
+              recomendacao: "Habilitar todos os flags de S3 Block Public Access ou justificar exceção documentada.",
+              dono: "Cliente técnico",
+            },
+            {
+              id: "AWS-MOCK-003",
+              titulo: "Security Hub com findings HIGH não tratados",
+              controle: "Postura CIS ou Security Hub",
+              severidade: "bloqueador",
+              evidencia: "Security Hub simulado mostra 5 findings HIGH abertos, incluindo IAM.1 e S3.8.",
+              impacto: "Gap técnico provável antes de uma conversa de readiness.",
+              recomendacao: "Remediar ou documentar exceções aceitas antes de anexar export.",
+              dono: "Cliente técnico + Consultoria",
+            },
+            {
+              id: "AWS-MOCK-004",
+              titulo: "Chave KMS sem rotação documentada",
+              controle: "Proteção de dados",
+              severidade: "medio",
+              evidencia: "KMS key fictícia `alias/cbp-prod-data` sem rotação anual no snapshot simulado.",
+              impacto: "Pode virar follow-up de segurança e governança.",
+              recomendacao: "Habilitar rotação ou anexar justificativa formal de controle compensatório.",
+              dono: "Cliente técnico",
+            },
+            {
+              id: "AWS-MOCK-005",
+              titulo: "Backup policy não cobre banco principal",
+              controle: "Proteção de dados",
+              severidade: "alto",
+              evidencia:
+                "Recurso fictício `rds:cbp-prod-primary` sem recovery point recente no snapshot simulado de backup.",
+              impacto: "Evidência de resiliência fica incompleta para workload crítico.",
+              recomendacao: "Vincular banco principal a backup policy e gerar evidência de último recovery point.",
+              dono: "Cliente técnico",
+            },
+            {
+              id: "AWS-MOCK-006",
+              titulo: "Usuário IAM legado sem MFA",
+              controle: "Postura CIS ou Security Hub",
+              severidade: "medio",
+              evidencia: "Usuário fictício `legacy-deploy-user` com console enabled e MFA ausente.",
+              impacto: "Achado de higiene de acesso que pode aparecer em frameworks de segurança.",
+              recomendacao: "Remover usuário legado ou exigir MFA e acesso via role.",
+              dono: "Cliente técnico",
+            },
+          ],
+          respostas: {
+            "ph-escopo": "sim",
+            "ph-cis": "nao",
+            "ph-logs": "nao",
+            "ph-dados": "nao",
+            "ph-diagrama": "desconhecido",
           },
         },
       };
@@ -2398,7 +2652,10 @@
         if (botao.dataset.caminho) definirCaminho(botao.dataset.caminho);
         if (botao.dataset.ajuda) abrirModal(botao.dataset.ajuda, false);
         if (botao.dataset.cenario) aplicarCenario(botao.dataset.cenario);
-        if (botao.dataset.assessment) carregarAssessmentMockado(botao.dataset.assessment);
+        if (botao.dataset.assessment) {
+          carregarAssessmentMockado(botao.dataset.assessment);
+          if (botao.dataset.abrirRelatorio) definirTela("relatorio");
+        }
         if (botao.dataset.check) {
           estado.respostas[estado.caminho][botao.dataset.check] = botao.dataset.valor;
           renderizar();
