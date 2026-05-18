@@ -414,6 +414,38 @@
         gap: 10px;
       }
 
+      .cenarios {
+        display: grid;
+        gap: 10px;
+      }
+
+      .cenario {
+        min-height: 64px;
+        width: 100%;
+        border: 1px solid #c6d3df;
+        border-radius: 8px;
+        background: #ffffff;
+        color: var(--texto);
+        padding: 12px;
+        text-align: left;
+        display: grid;
+        gap: 4px;
+      }
+
+      .cenario:hover {
+        border-color: var(--verde);
+        box-shadow: 0 0 0 3px rgba(22, 132, 119, 0.12);
+      }
+
+      .cenario strong {
+        font-size: 0.92rem;
+      }
+
+      .cenario span {
+        color: var(--texto-suave);
+        font-size: 0.82rem;
+      }
+
       .cartao-caminho,
       .metrica {
         border: 1px solid var(--linha);
@@ -470,6 +502,76 @@
       .relatorio {
         display: grid;
         gap: 10px;
+      }
+
+      .resumo-executivo {
+        display: grid;
+        grid-template-columns: 0.84fr 1.16fr;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .readiness {
+        border-radius: 8px;
+        padding: 16px;
+        background: linear-gradient(135deg, #173047, #168477);
+        color: #ffffff;
+        display: grid;
+        align-content: center;
+        gap: 7px;
+      }
+
+      .readiness strong {
+        font-size: clamp(2.1rem, 4vw, 3.2rem);
+        line-height: 1;
+      }
+
+      .readiness span {
+        color: #d9f2ee;
+        font-weight: 760;
+      }
+
+      .leitura-executiva {
+        border: 1px solid var(--linha);
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 14px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .leitura-executiva h4 {
+        margin: 0;
+        font-size: 0.98rem;
+      }
+
+      .leitura-executiva p {
+        margin: 0;
+        color: var(--texto-suave);
+        font-size: 0.88rem;
+      }
+
+      .perguntas-cliente {
+        display: grid;
+        gap: 8px;
+      }
+
+      .pergunta-cliente {
+        border: 1px solid var(--linha);
+        border-radius: 8px;
+        padding: 11px;
+        background: #ffffff;
+        display: grid;
+        gap: 5px;
+      }
+
+      .pergunta-cliente strong {
+        font-size: 0.88rem;
+      }
+
+      .pergunta-cliente span {
+        color: var(--texto-suave);
+        font-size: 0.83rem;
       }
 
       .check,
@@ -601,6 +703,36 @@
         color: var(--neutro);
       }
 
+      .prioridade {
+        display: inline-flex;
+        width: fit-content;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 0.7rem;
+        font-weight: 850;
+        text-transform: uppercase;
+      }
+
+      .prioridade.bloqueador {
+        background: #fff0ed;
+        color: var(--vermelho);
+      }
+
+      .prioridade.alto {
+        background: #fff5dd;
+        color: var(--amarelo);
+      }
+
+      .prioridade.medio {
+        background: #e9f6f3;
+        color: var(--verde-escuro);
+      }
+
+      .prioridade.baixo {
+        background: #eef2f7;
+        color: var(--neutro);
+      }
+
       .metadados {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -722,6 +854,7 @@
         .navegacao,
         .segmentado,
         .resumo-caminhos,
+        .resumo-executivo,
         .placar,
         .metadados,
         .opcoes-check {
@@ -903,6 +1036,24 @@
                     <li>Quais gaps parecem mais críticos antes de envolver reviewer ou PSA.</li>
                   </ul>
                 </div>
+
+                <div class="notas">
+                  <h4>Cenários rápidos para a reunião</h4>
+                  <div class="cenarios">
+                    <button class="cenario" data-cenario="partner-maduro">
+                      <strong>Partner Hosted maduro</strong>
+                      <span>Boa evidência técnica, poucos gaps e conversa focada em validação.</span>
+                    </button>
+                    <button class="cenario" data-cenario="partner-gaps">
+                      <strong>Partner Hosted com gaps</strong>
+                      <span>Escopo parcial, evidência técnica faltando e bloqueios prováveis.</span>
+                    </button>
+                    <button class="cenario" data-cenario="service-offering">
+                      <strong>Service Offering</strong>
+                      <span>Oferta processual com lacunas em SoW, acesso e feedback.</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -952,6 +1103,7 @@
                 <p id="subtituloRelatorio">Snapshot de readiness para discussão.</p>
               </div>
               <div class="corpo-painel relatorio">
+                <div class="resumo-executivo" id="resumoExecutivo"></div>
                 <div class="placar" id="placar"></div>
                 <div class="relatorio" id="listaRelatorio"></div>
               </div>
@@ -965,12 +1117,7 @@
               <div class="corpo-painel">
                 <div class="notas" style="margin-top: 0; padding-top: 0; border-top: 0">
                   <h4>Validar processo real</h4>
-                  <ul>
-                    <li>Esse status ajuda antes de falar com o PSA?</li>
-                    <li>Qual evidência está faltando que a AWS sempre pede?</li>
-                    <li>Qual controle está simplificado demais para o mundo real?</li>
-                    <li>O primeiro valor pago seria gap report, plano, workspace ou pacote?</li>
-                  </ul>
+                  <div class="perguntas-cliente" id="perguntasCliente"></div>
                 </div>
                 <div class="notas">
                   <h4>Não objetivos desta demo</h4>
@@ -982,6 +1129,8 @@
                   </ul>
                 </div>
                 <div class="acoes">
+                  <button class="botao-primario" id="copiarResumo">Copiar resumo</button>
+                  <button class="botao-secundario" id="baixarRelatorio">Baixar relatório</button>
                   <button class="botao-secundario" data-ir="checklist">Ajustar respostas</button>
                   <button class="botao-secundario" data-ir="intake">Simular outro caminho</button>
                 </div>
@@ -1099,31 +1248,31 @@
         {
           id: "nomeSolucao",
           titulo: "Nome da solução",
-          texto: "Identifica o assessment e ajuda a conversa a sair do abstrato. Em um produto real, esse nome viraria parte do histórico e dos relatórios.",
+          texto: "Vamos começar dando nome ao caso. Isso transforma a conversa em um assessment concreto, com dono, histórico e relatório rastreável.",
           pergunta: "Qual solução, workload ou oferta será avaliada nesta simulação?",
         },
         {
           id: "caminhoFtr",
           titulo: "Tipo de FTR",
-          texto: "O tipo muda completamente o que pode ser automatizado. Partner Hosted puxa evidência técnica; Service Offering puxa evidência de processo e entrega.",
+          texto: "Agora escolhemos o caminho. Partner Hosted tende a pedir evidência técnica; Service Offering tende a pedir evidência de processo, entrega e governança.",
           pergunta: "Esta conversa deve simular uma solução hospedada pelo partner ou uma oferta de serviço?",
         },
         {
           id: "modeloSolucao",
           titulo: "Modelo da solução",
-          texto: "O modelo evita misturar scanner técnico com evidência de serviço. Ele também ajuda o cliente a corrigir o roteamento se a realidade for híbrida.",
+          texto: "Aqui calibramos a lente do assessment. Um SaaS hospedado, um serviço gerenciado e uma consultoria não deveriam produzir o mesmo tipo de gap.",
           pergunta: "Como esta solução é vendida ou entregue?",
         },
         {
           id: "escopoDeclarado",
           titulo: "Escopo declarado",
-          texto: "Sem escopo explícito, qualquer status de readiness é frágil. Contas, regiões, workloads e exclusões precisam estar claros antes de confiar no resultado.",
+          texto: "Este é um ponto de confiança. Sem contas, regiões, workloads e exclusões claros, o relatório deve mostrar risco, não uma falsa sensação de readiness.",
           pergunta: "O escopo já está claro ou ainda precisa ser descoberto?",
         },
         {
           id: "maturidadeEvidencia",
           titulo: "Maturidade das evidências",
-          texto: "Este campo define o cenário inicial do checklist. Ele não aprova nada; apenas simula se a conversa começa com evidências fortes, mistas ou fracas.",
+          texto: "Fechamos o intake entendendo o ponto de partida. A demo usa isso para montar um checklist inicial, mas evidência ausente continua sendo lacuna.",
           pergunta: "Quão prontas estão as evidências hoje?",
         },
       ];
@@ -1139,6 +1288,40 @@
         falha: "falha",
         "precisa-evidencia": "precisa de evidência",
         "nao-aplicavel": "não aplicável",
+      };
+
+      const rotulosPrioridade = {
+        bloqueador: "bloqueador",
+        alto: "alto risco",
+        medio: "médio",
+        baixo: "baixo",
+      };
+
+      const cenarios = {
+        "partner-maduro": {
+          caminho: "partner",
+          nome: "Plataforma SaaS de cobrança",
+          modelo: "saas",
+          escopo: "claro",
+          maturidade: "forte",
+          respostas: ["sim", "sim", "sim", "sim", "desconhecido"],
+        },
+        "partner-gaps": {
+          caminho: "partner",
+          nome: "Workload SaaS em preparação",
+          modelo: "saas",
+          escopo: "parcial",
+          maturidade: "fraca",
+          respostas: ["desconhecido", "nao", "desconhecido", "nao", "nao"],
+        },
+        "service-offering": {
+          caminho: "service",
+          nome: "Oferta de modernização AWS",
+          modelo: "managed",
+          escopo: "parcial",
+          maturidade: "mista",
+          respostas: ["desconhecido", "sim", "nao", "nao", "desconhecido"],
+        },
       };
 
       const estado = {
@@ -1316,6 +1499,10 @@
         return Object.fromEntries(catalogo[caminho].map((item, indice) => [item.id, valores[indice]]));
       }
 
+      function respostasPorValores(caminho, valores) {
+        return Object.fromEntries(catalogo[caminho].map((item, indice) => [item.id, valores[indice] || "desconhecido"]));
+      }
+
       function respostaParaStatus(resposta, item) {
         if (resposta === "sim") return "aprovado";
         if (resposta === "nao") return "falha";
@@ -1331,12 +1518,27 @@
         return "A evidência está incompleta ou não foi vinculada ao assessment.";
       }
 
+      function prioridadeResultado(status, item) {
+        if (status === "aprovado" || status === "nao-aplicavel") return "baixo";
+        const risco = item.risco.toLowerCase();
+        if (status === "falha" && risco.includes("alto")) return "bloqueador";
+        if (risco.includes("alto")) return "alto";
+        if (status === "falha") return "alto";
+        return "medio";
+      }
+
       function resultados() {
         const respostas = estado.respostas[estado.caminho] || respostasPadrao(estado.caminho);
         return catalogo[estado.caminho].map((item) => {
           const resposta = respostas[item.id] || "desconhecido";
           const status = respostaParaStatus(resposta, item);
-          return { ...item, resposta, status, motivo: motivoStatus(status, resposta) };
+          return {
+            ...item,
+            resposta,
+            status,
+            prioridade: prioridadeResultado(status, item),
+            motivo: motivoStatus(status, resposta),
+          };
         });
       }
 
@@ -1376,6 +1578,42 @@
         return el?.selectedOptions?.[0]?.textContent || "Não informado";
       }
 
+      function calcularResumo(itens) {
+        const aplicaveis = itens.filter((item) => item.status !== "nao-aplicavel");
+        const aprovados = itens.filter((item) => item.status === "aprovado").length;
+        const falhas = itens.filter((item) => item.status === "falha").length;
+        const pendentes = itens.filter((item) => item.status === "precisa-evidencia").length;
+        const bloqueadores = itens.filter((item) => item.prioridade === "bloqueador").length;
+        const readiness = aplicaveis.length ? Math.round((aprovados / aplicaveis.length) * 100) : 0;
+        const recomendacao = bloqueadores
+          ? "Organizar evidências bloqueadoras antes de envolver reviewer ou PSA."
+          : pendentes
+            ? "Fechar evidências pendentes e confirmar escopo antes de tratar como pronto."
+            : "Usar o relatório como pauta de validação e confirmar evidências com o cliente.";
+        return { aplicaveis, aprovados, falhas, pendentes, bloqueadores, readiness, recomendacao };
+      }
+
+      function perguntasParaCliente(itens) {
+        const gaps = itens.filter((item) => item.status === "falha" || item.status === "precisa-evidencia");
+        const principais = gaps.slice(0, 4).map((item) => ({
+          titulo: item.titulo,
+          pergunta: `Você já tem evidência auditável para “${item.titulo}”? Quem é dono e em quanto tempo ela pode ser anexada?`,
+        }));
+        if (principais.length < 4) {
+          principais.push(
+            {
+              titulo: "Aceite do relatório",
+              pergunta: "Esse formato de gap report ajudaria antes da conversa com PSA ou reviewer?",
+            },
+            {
+              titulo: "Prioridade comercial",
+              pergunta: "O primeiro valor pago seria gap report, plano de remediação, workspace de evidências ou pacote de submissão?",
+            },
+          );
+        }
+        return principais.slice(0, 4);
+      }
+
       function renderizarContexto() {
         const nomeCaminho = estado.caminho === "partner" ? "Partner Hosted" : "Service Offering";
         $("#resumoContexto").innerHTML = `
@@ -1388,6 +1626,7 @@
 
       function renderizarRelatorio() {
         const itens = resultados();
+        const resumo = calcularResumo(itens);
         const totais = itens.reduce(
           (acc, item) => {
             acc[item.status] += 1;
@@ -1399,6 +1638,18 @@
         $("#subtituloRelatorio").textContent = `${$("#nomeSolucao").value || "Solução não informada"} - ${
           estado.caminho === "partner" ? "Partner Hosted" : "Service Offering"
         }`;
+        $("#resumoExecutivo").innerHTML = `
+          <div class="readiness">
+            <span>Readiness estimado</span>
+            <strong>${resumo.readiness}%</strong>
+            <span>${resumo.bloqueadores} gaps bloqueadores · ${resumo.pendentes} evidências pendentes</span>
+          </div>
+          <div class="leitura-executiva">
+            <h4>Leitura executiva</h4>
+            <p>${resumo.recomendacao}</p>
+            <p>Este percentual é uma simulação para conversa. Ele não substitui evidência determinística, revisão humana nem aprovação da AWS.</p>
+          </div>
+        `;
         $("#placar").innerHTML = `
           <div class="metrica"><strong>${totais.aprovado}</strong><span>Aprovado</span></div>
           <div class="metrica"><strong>${totais.falha}</strong><span>Falha</span></div>
@@ -1413,6 +1664,7 @@
                   <h4>${item.titulo}</h4>
                   <span class="etiqueta ${item.status}">${rotulosStatus[item.status]}</span>
                 </div>
+                <span class="prioridade ${item.prioridade}">${rotulosPrioridade[item.prioridade]}</span>
                 <p>${item.motivo}</p>
                 <div class="metadados">
                   <div><strong>Evidência esperada</strong><br>${item.evidencia}</div>
@@ -1421,6 +1673,16 @@
                   <div><strong>Resposta atual</strong><br>${rotulosResposta[item.resposta]}</div>
                 </div>
               </article>
+            `,
+          )
+          .join("");
+        $("#perguntasCliente").innerHTML = perguntasParaCliente(itens)
+          .map(
+            (item) => `
+              <div class="pergunta-cliente">
+                <strong>${item.titulo}</strong>
+                <span>${item.pergunta}</span>
+              </div>
             `,
           )
           .join("");
@@ -1435,6 +1697,79 @@
         atualizarValidacao();
       }
 
+      function aplicarCenario(id) {
+        const cenario = cenarios[id];
+        if (!cenario) return;
+        $("#nomeSolucao").value = cenario.nome;
+        $("#modeloSolucao").value = cenario.modelo;
+        $("#escopoDeclarado").value = cenario.escopo;
+        $("#maturidadeEvidencia").value = cenario.maturidade;
+        guia.forEach((item) => estado.preenchidos.add(item.id));
+        definirCaminho(cenario.caminho);
+        estado.respostas[cenario.caminho] = respostasPorValores(cenario.caminho, cenario.respostas);
+        estado.guiaAtivo = false;
+        fecharModal();
+        renderizar();
+      }
+
+      function resumoMarkdown() {
+        const itens = resultados();
+        const resumo = calcularResumo(itens);
+        const nomeCaminho = estado.caminho === "partner" ? "Partner Hosted" : "Service Offering";
+        const linhas = [
+          `# Relatório de gaps simulado - ${$("#nomeSolucao").value || "Solução não informada"}`,
+          "",
+          `Tipo de FTR: ${nomeCaminho}`,
+          `Modelo: ${textoSelecionado("modeloSolucao")}`,
+          `Escopo: ${textoSelecionado("escopoDeclarado")}`,
+          `Readiness estimado: ${resumo.readiness}%`,
+          `Gaps bloqueadores: ${resumo.bloqueadores}`,
+          `Evidências pendentes: ${resumo.pendentes}`,
+          "",
+          `Recomendação: ${resumo.recomendacao}`,
+          "",
+          "## Controles",
+          ...itens.map(
+            (item) =>
+              `- ${item.titulo}: ${rotulosStatus[item.status]} | prioridade: ${rotulosPrioridade[item.prioridade]} | próxima ação: ${item.proximaAcao}`,
+          ),
+          "",
+          "## Perguntas para o cliente",
+          ...perguntasParaCliente(itens).map((item) => `- ${item.pergunta}`),
+          "",
+          "Observação: este relatório é uma simulação para discovery. Não substitui evidência determinística, revisão humana ou aprovação da AWS.",
+        ];
+        return linhas.join("\n");
+      }
+
+      async function copiarResumo() {
+        const texto = resumoMarkdown();
+        try {
+          if (!navigator.clipboard?.writeText) throw new Error("clipboard indisponível");
+          await navigator.clipboard.writeText(texto);
+        } catch {
+          const area = document.createElement("textarea");
+          area.value = texto;
+          document.body.appendChild(area);
+          area.select();
+          document.execCommand("copy");
+          area.remove();
+        }
+        $("#copiarResumo").textContent = "Resumo copiado";
+        window.setTimeout(() => ($("#copiarResumo").textContent = "Copiar resumo"), 1600);
+      }
+
+      function baixarRelatorio() {
+        const blob = new Blob([resumoMarkdown()], { type: "text/markdown;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "relatorio-ftr-simulado.md";
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(link.href);
+        link.remove();
+      }
+
       document.addEventListener("click", (evento) => {
         const botao = evento.target.closest("button");
         if (!botao) return;
@@ -1443,6 +1778,7 @@
         if (botao.dataset.ir) definirTela(botao.dataset.ir);
         if (botao.dataset.caminho) definirCaminho(botao.dataset.caminho);
         if (botao.dataset.ajuda) abrirModal(botao.dataset.ajuda, false);
+        if (botao.dataset.cenario) aplicarCenario(botao.dataset.cenario);
         if (botao.dataset.check) {
           estado.respostas[estado.caminho][botao.dataset.check] = botao.dataset.valor;
           renderizar();
@@ -1477,6 +1813,8 @@
       $("#iniciarTour").addEventListener("click", iniciarTour);
       $("#fecharModal").addEventListener("click", fecharModal);
       $("#acaoModal").addEventListener("click", focarCampoAtual);
+      $("#copiarResumo").addEventListener("click", copiarResumo);
+      $("#baixarRelatorio").addEventListener("click", baixarRelatorio);
       $("#fundoModal").addEventListener("click", (evento) => {
         if (evento.target.id === "fundoModal") fecharModal();
       });
