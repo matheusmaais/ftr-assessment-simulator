@@ -516,6 +516,17 @@
         font-size: 0.86rem;
       }
 
+      .assessment-exemplo ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--texto-suave);
+        font-size: 0.84rem;
+      }
+
+      .assessment-exemplo li + li {
+        margin-top: 3px;
+      }
+
       .cenario {
         min-height: 64px;
         width: 100%;
@@ -1358,10 +1369,18 @@
                   <h4>Cenários rápidos para a reunião</h4>
                   <div class="selo-simulacao">Cenários ilustrativos: servem para demonstrar o fluxo, não representam evidências reais.</div>
                   <div class="assessment-exemplo">
-                    <h4>Assessment completo de exemplo</h4>
-                    <p>Carrega um caso fictício com cliente, escopo, evidências recebidas, hipóteses, gaps e relatório final.</p>
+                    <h4>O que é este assessment fictício?</h4>
+                    <p>
+                      É um caso inventado de uma plataforma SaaS hospedada na AWS. Ele mostra como a ferramenta
+                      organizaria contexto, evidências recebidas, hipóteses, gaps e findings.
+                    </p>
+                    <ul>
+                      <li><strong>Não veio de scan real</strong> e não acessa nenhuma conta AWS.</li>
+                      <li>Serve para demonstrar o formato de conversa e saída do assessment.</li>
+                      <li>Cliente fictício: CloudBilling Pro, SaaS B2B Partner Hosted.</li>
+                    </ul>
                     <button class="botao-primario" data-assessment="saas-partner-hosted">
-                      Carregar assessment completo
+                      Carregar assessment fictício completo
                     </button>
                   </div>
                   <div class="cenarios">
