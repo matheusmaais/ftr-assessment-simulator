@@ -16,11 +16,13 @@
         --azul-escuro: #111c29;
         --verde: #168477;
         --verde-escuro: #0e625b;
+        --ciano: #49b7c4;
         --amarelo: #a76800;
         --vermelho: #b83a30;
         --ok: #15703a;
         --neutro: #596575;
-        --sombra: 0 22px 55px rgba(20, 32, 46, 0.11);
+        --sombra: 0 24px 70px rgba(20, 32, 46, 0.12);
+        --sombra-suave: 0 12px 28px rgba(20, 32, 46, 0.08);
       }
 
       * {
@@ -36,8 +38,9 @@
         min-width: 320px;
         overflow-x: hidden;
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(243, 246, 248, 0.94)),
-          repeating-linear-gradient(90deg, rgba(36, 65, 95, 0.04) 0 1px, transparent 1px 80px),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(233, 241, 244, 0.92)),
+          repeating-linear-gradient(90deg, rgba(36, 65, 95, 0.045) 0 1px, transparent 1px 82px),
+          repeating-linear-gradient(180deg, rgba(36, 65, 95, 0.035) 0 1px, transparent 1px 82px),
           var(--fundo);
         color: var(--texto);
         font-family:
@@ -75,7 +78,9 @@
         min-width: 0;
         overflow: auto;
         padding: 26px 24px;
-        background: linear-gradient(180deg, #111c29 0%, #172637 100%);
+        background:
+          linear-gradient(180deg, rgba(17, 28, 41, 0.98) 0%, rgba(23, 38, 55, 0.98) 100%),
+          linear-gradient(135deg, rgba(73, 183, 196, 0.16), transparent 48%);
         color: #f7fafc;
       }
 
@@ -130,7 +135,7 @@
       }
 
       .navegacao button.ativo {
-        background: rgba(255, 255, 255, 0.1);
+        background: linear-gradient(90deg, rgba(55, 179, 166, 0.18), rgba(255, 255, 255, 0.08));
         color: #ffffff;
         box-shadow: inset 3px 0 0 #37b3a6;
       }
@@ -194,7 +199,13 @@
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 18px;
         align-items: start;
-        margin-bottom: 18px;
+        margin-bottom: 22px;
+        padding: 18px 18px 16px;
+        border: 1px solid rgba(190, 203, 216, 0.72);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.74);
+        box-shadow: var(--sombra-suave);
+        backdrop-filter: blur(12px);
       }
 
       .titulo {
@@ -272,15 +283,17 @@
       }
 
       .painel {
-        background: rgba(255, 255, 255, 0.92);
+        background: rgba(255, 255, 255, 0.94);
         border: 1px solid var(--linha);
         border-radius: 8px;
         box-shadow: var(--sombra);
         overflow: hidden;
+        backdrop-filter: blur(10px);
       }
 
       .painel-destaque {
-        border-top: 5px solid var(--verde);
+        border-top: 5px solid transparent;
+        border-image: linear-gradient(90deg, var(--verde), var(--ciano), var(--azul)) 1;
       }
 
       .cabecalho-painel {
@@ -312,9 +325,9 @@
         display: grid;
         gap: 8px;
         padding: 12px;
-        border: 1px solid transparent;
+        border: 1px solid #edf2f6;
         border-radius: 8px;
-        background: #f8fafc;
+        background: linear-gradient(180deg, #fbfdfe, #f6f9fb);
       }
 
       .campo.realce-guia {
@@ -403,7 +416,7 @@
 
       .segmento.ativo {
         border-color: var(--verde);
-        background: #e9f6f3;
+        background: linear-gradient(180deg, #e9f6f3, #f7fcfb);
         box-shadow: inset 0 0 0 2px rgba(22, 132, 119, 0.18);
       }
 
@@ -434,7 +447,8 @@
 
       .cenario:hover {
         border-color: var(--verde);
-        box-shadow: 0 0 0 3px rgba(22, 132, 119, 0.12);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(20, 32, 46, 0.1);
       }
 
       .cenario strong {
@@ -514,20 +528,44 @@
       .readiness {
         border-radius: 8px;
         padding: 16px;
-        background: linear-gradient(135deg, #173047, #168477);
+        background: linear-gradient(145deg, #132a3f 0%, #145c63 58%, #168477 100%);
         color: #ffffff;
         display: grid;
         align-content: center;
         gap: 7px;
+        position: relative;
+        overflow: hidden;
       }
 
       .readiness strong {
-        font-size: clamp(2.1rem, 4vw, 3.2rem);
+        font-size: clamp(1.86rem, 3vw, 2.55rem);
         line-height: 1;
       }
 
       .readiness span {
         color: #d9f2ee;
+        font-weight: 760;
+      }
+
+      .readiness .mini-simulacao {
+        width: fit-content;
+        border-radius: 999px;
+        padding: 5px 8px;
+        background: rgba(255, 255, 255, 0.14);
+        color: #ffffff;
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .selo-simulacao {
+        border: 1px solid #e1b15d;
+        border-radius: 8px;
+        background: #fff7e6;
+        color: #6f4700;
+        padding: 10px 12px;
+        font-size: 0.86rem;
         font-weight: 760;
       }
 
@@ -556,6 +594,34 @@
         gap: 8px;
       }
 
+      .matriz-responsabilidade,
+      .timeline {
+        display: grid;
+        gap: 8px;
+      }
+
+      .responsavel,
+      .marco {
+        border: 1px solid var(--linha);
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 10px;
+      }
+
+      .responsavel strong,
+      .marco strong {
+        display: block;
+        font-size: 0.86rem;
+      }
+
+      .responsavel span,
+      .marco span {
+        display: block;
+        margin-top: 3px;
+        color: var(--texto-suave);
+        font-size: 0.82rem;
+      }
+
       .pergunta-cliente {
         border: 1px solid var(--linha);
         border-radius: 8px;
@@ -572,6 +638,59 @@
       .pergunta-cliente span {
         color: var(--texto-suave);
         font-size: 0.83rem;
+      }
+
+      .cta-proximo-passo {
+        border: 1px solid #a8d3cb;
+        border-radius: 8px;
+        background: #e9f6f3;
+        padding: 12px;
+        display: grid;
+        gap: 5px;
+      }
+
+      .cta-proximo-passo strong {
+        font-size: 0.92rem;
+      }
+
+      .cta-proximo-passo span {
+        color: #315c58;
+        font-size: 0.84rem;
+      }
+
+      @media print {
+        .lateral,
+        .acoes-topo,
+        .acoes,
+        .navegacao {
+          display: none !important;
+        }
+
+        .aplicacao,
+        .grade,
+        .resumo-executivo {
+          display: block;
+        }
+
+        main {
+          padding: 0;
+        }
+
+        .painel {
+          box-shadow: none;
+          break-inside: avoid;
+          margin-bottom: 12px;
+        }
+
+        body::before {
+          content: "SIMULAÇÃO - cobertura declarada, não verificada";
+          display: block;
+          margin-bottom: 12px;
+          padding: 10px;
+          border: 1px solid #e1b15d;
+          color: #6f4700;
+          font-weight: 800;
+        }
       }
 
       .check,
@@ -633,7 +752,8 @@
       }
 
       .metrica {
-        background: #ffffff;
+        background: linear-gradient(180deg, #ffffff, #f8fbfd);
+        box-shadow: var(--sombra-suave);
       }
 
       .metrica strong {
@@ -650,6 +770,7 @@
 
       .resultado {
         border-left-width: 5px;
+        box-shadow: 0 10px 26px rgba(20, 32, 46, 0.07);
       }
 
       .resultado.aprovado {
@@ -887,7 +1008,7 @@
           </button>
           <button data-tela-alvo="relatorio">
             <span class="numero">3</span>
-            <span>Relatório de gaps</span>
+            <span>Relatório simulado</span>
           </button>
         </nav>
 
@@ -1039,6 +1160,7 @@
 
                 <div class="notas">
                   <h4>Cenários rápidos para a reunião</h4>
+                  <div class="selo-simulacao">Cenários ilustrativos: servem para demonstrar o fluxo, não representam evidências reais.</div>
                   <div class="cenarios">
                     <button class="cenario" data-cenario="partner-maduro">
                       <strong>Partner Hosted maduro</strong>
@@ -1086,7 +1208,7 @@
                   <h4>Limite de interpretação</h4>
                   <ul>
                     <li>Resposta manual sem evidência continua como “precisa de evidência”.</li>
-                    <li>Automação futura precisa preservar snapshot e versão do check.</li>
+                    <li>Qualquer automação técnica precisa preservar snapshot e versão do check.</li>
                     <li>Service Offering depende de revisão humana explícita.</li>
                   </ul>
                 </div>
@@ -1118,6 +1240,32 @@
                 <div class="notas" style="margin-top: 0; padding-top: 0; border-top: 0">
                   <h4>Validar processo real</h4>
                   <div class="perguntas-cliente" id="perguntasCliente"></div>
+                </div>
+                <div class="notas">
+                  <h4>Quem faz o quê</h4>
+                  <div class="matriz-responsabilidade">
+                    <div class="responsavel">
+                      <strong>Cliente</strong>
+                      <span>Confirma escopo, fornece evidências e aponta donos internos.</span>
+                    </div>
+                    <div class="responsavel">
+                      <strong>Consultoria</strong>
+                      <span>Conduz intake, revisa evidências, prioriza gaps e monta plano de ação.</span>
+                    </div>
+                    <div class="responsavel">
+                      <strong>Potencial de automação</strong>
+                      <span>Pontos técnicos que poderiam ser validados por integração AWS em uma etapa futura.</span>
+                    </div>
+                    <div class="responsavel">
+                      <strong>PSA / reviewer</strong>
+                      <span>Confirma suficiência das evidências e orienta ajustes para submissão.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="notas">
+                  <h4>Timeline simulada</h4>
+                  <div class="selo-simulacao">Prazos ilustrativos para discussão; não são SLA nem compromisso de entrega.</div>
+                  <div class="timeline" id="timelineSimulada"></div>
                 </div>
                 <div class="notas">
                   <h4>Não objetivos desta demo</h4>
@@ -1284,10 +1432,10 @@
       };
 
       const rotulosStatus = {
-        aprovado: "aprovado",
-        falha: "falha",
-        "precisa-evidencia": "precisa de evidência",
-        "nao-aplicavel": "não aplicável",
+        aprovado: "sem gap declarado",
+        falha: "gap identificado",
+        "precisa-evidencia": "evidência pendente",
+        "nao-aplicavel": "fora de escopo",
       };
 
       const rotulosPrioridade = {
@@ -1471,6 +1619,7 @@
         };
         $("#tituloPagina").textContent = titulos[tela][0];
         $("#subtituloPagina").textContent = titulos[tela][1];
+        window.scrollTo({ top: 0, behavior: "smooth" });
         renderizar();
       }
 
@@ -1489,14 +1638,7 @@
       }
 
       function respostasPadrao(caminho) {
-        const maturidade = $("#maturidadeEvidencia")?.value || "mista";
-        const cenarios = {
-          forte: ["sim", "sim", "sim", "desconhecido", "sim"],
-          mista: ["sim", "desconhecido", "sim", "desconhecido", "nao"],
-          fraca: ["desconhecido", "nao", "desconhecido", "nao", "desconhecido"],
-        };
-        const valores = cenarios[maturidade] || cenarios.mista;
-        return Object.fromEntries(catalogo[caminho].map((item, indice) => [item.id, valores[indice]]));
+        return Object.fromEntries(catalogo[caminho].map((item) => [item.id, "desconhecido"]));
       }
 
       function respostasPorValores(caminho, valores) {
@@ -1506,13 +1648,12 @@
       function respostaParaStatus(resposta, item) {
         if (resposta === "sim") return "aprovado";
         if (resposta === "nao") return "falha";
-        if (item.id === "ph-diagrama" && $("#modeloSolucao").value === "consulting") return "nao-aplicavel";
         return "precisa-evidencia";
       }
 
       function motivoStatus(status, resposta) {
-        if (status === "aprovado") return "A evidência parece pronta para discussão com reviewer.";
-        if (status === "falha") return "A resposta atual contradiz o estado esperado de readiness.";
+        if (status === "aprovado") return "O cliente declarou que a evidência existe; ela ainda precisa ser revisada.";
+        if (status === "falha") return "A resposta atual indica uma lacuna que pode bloquear ou atrasar a revisão.";
         if (status === "nao-aplicavel") return "Marcado fora de escopo pelo modelo selecionado.";
         if (resposta === "desconhecido") return "Nenhuma evidência foi confirmada ainda.";
         return "A evidência está incompleta ou não foi vinculada ao assessment.";
@@ -1527,6 +1668,34 @@
         return "medio";
       }
 
+      function estadoEvidencia(resposta) {
+        if (resposta === "sim") return "pronta";
+        if (resposta === "nao") return "ausente";
+        return "desconhecida";
+      }
+
+      function donoSugerido(item, status) {
+        if (status === "aprovado" || status === "nao-aplicavel") return "Cliente / Consultoria";
+        if (item.id.includes("cis") || item.id.includes("logs") || item.id.includes("dados")) return "Cliente técnico";
+        if (item.id.includes("diagrama") || item.id.includes("escopo")) return "Cliente + Consultoria";
+        if (item.id.includes("acesso") || item.id.includes("risco")) return "Cliente + Consultoria";
+        return "A definir";
+      }
+
+      function esforcoEstimado(prioridade, status) {
+        if (status === "aprovado" || status === "nao-aplicavel") return "baixo";
+        if (prioridade === "bloqueador") return "alto";
+        if (prioridade === "alto") return "médio";
+        return "baixo";
+      }
+
+      function prazoSugerido(prioridade, status) {
+        if (status === "aprovado" || status === "nao-aplicavel") return "já encaminhado";
+        if (prioridade === "bloqueador") return "1-2 semanas";
+        if (prioridade === "alto") return "3-5 dias";
+        return "1-2 dias";
+      }
+
       function resultados() {
         const respostas = estado.respostas[estado.caminho] || respostasPadrao(estado.caminho);
         return catalogo[estado.caminho].map((item) => {
@@ -1538,6 +1707,7 @@
             status,
             prioridade: prioridadeResultado(status, item),
             motivo: motivoStatus(status, resposta),
+            estadoEvidencia: estadoEvidencia(resposta),
           };
         });
       }
@@ -1590,7 +1760,12 @@
           : pendentes
             ? "Fechar evidências pendentes e confirmar escopo antes de tratar como pronto."
             : "Usar o relatório como pauta de validação e confirmar evidências com o cliente.";
-        return { aplicaveis, aprovados, falhas, pendentes, bloqueadores, readiness, recomendacao };
+        const proximoPasso = bloqueadores
+          ? "Agendar sessão de evidências bloqueadoras"
+          : pendentes
+            ? "Montar plano curto de coleta de evidências"
+            : "Validar relatório com o cliente e preparar conversa com PSA";
+        return { aplicaveis, aprovados, falhas, pendentes, bloqueadores, readiness, recomendacao, proximoPasso };
       }
 
       function perguntasParaCliente(itens) {
@@ -1607,11 +1782,36 @@
             },
             {
               titulo: "Prioridade comercial",
-              pergunta: "O primeiro valor pago seria gap report, plano de remediação, workspace de evidências ou pacote de submissão?",
+              pergunta: "Qual saída seria mais útil primeiro: gap report, plano de remediação, workspace de evidências ou pacote de submissão?",
             },
           );
         }
         return principais.slice(0, 4);
+      }
+
+      function timelineParaResumo(resumo) {
+        if (resumo.bloqueadores) {
+          return [
+            ["Hoje · ilustrativo", "Confirmar escopo e donos das evidências bloqueadoras."],
+            ["D+2 · ilustrativo", "Cliente e Consultoria reúnem evidências críticas."],
+            ["D+5 · ilustrativo", "Revisar gaps restantes e decidir se precisa de scan técnico."],
+            ["D+10 · ilustrativo", "Preparar conversa com PSA/reviewer com riscos explícitos."],
+          ];
+        }
+        if (resumo.pendentes) {
+          return [
+            ["Hoje · ilustrativo", "Validar checklist e evidências pendentes com o cliente."],
+            ["D+2 · ilustrativo", "Anexar documentos e snapshots faltantes."],
+            ["D+5 · ilustrativo", "Revisar relatório e priorizar remediações pequenas."],
+            ["D+7 · ilustrativo", "Decidir próximo passo: scan técnico ou pacote documental."],
+          ];
+        }
+        return [
+          ["Hoje · ilustrativo", "Confirmar que a simulação representa o caso real."],
+          ["D+1 · ilustrativo", "Revisar evidências com Consultoria."],
+          ["D+3 · ilustrativo", "Preparar narrativa e perguntas para PSA/reviewer."],
+          ["D+5 · ilustrativo", "Planejar submissão ou validação técnica complementar."],
+        ];
       }
 
       function renderizarContexto() {
@@ -1640,21 +1840,27 @@
         }`;
         $("#resumoExecutivo").innerHTML = `
           <div class="readiness">
-            <span>Readiness estimado</span>
+            <span class="mini-simulacao">simulação</span>
+            <span>Cobertura declarada</span>
             <strong>${resumo.readiness}%</strong>
-            <span>${resumo.bloqueadores} gaps bloqueadores · ${resumo.pendentes} evidências pendentes</span>
+            <span>% de respostas positivas · ${resumo.bloqueadores} gaps bloqueadores · ${resumo.pendentes} evidências pendentes</span>
           </div>
           <div class="leitura-executiva">
+            <div class="selo-simulacao">SIMULAÇÃO: cobertura declarada, não verificada. Não substitui revisão FTR oficial.</div>
             <h4>Leitura executiva</h4>
             <p>${resumo.recomendacao}</p>
-            <p>Este percentual é uma simulação para conversa. Ele não substitui evidência determinística, revisão humana nem aprovação da AWS.</p>
+            <p>O percentual indica respostas positivas no checklist, não probabilidade de aprovação ou validação oficial.</p>
+            <div class="cta-proximo-passo">
+              <strong>Próximo passo recomendado</strong>
+              <span>${resumo.proximoPasso}</span>
+            </div>
           </div>
         `;
         $("#placar").innerHTML = `
-          <div class="metrica"><strong>${totais.aprovado}</strong><span>Aprovado</span></div>
-          <div class="metrica"><strong>${totais.falha}</strong><span>Falha</span></div>
-          <div class="metrica"><strong>${totais["precisa-evidencia"]}</strong><span>Precisa de evidência</span></div>
-          <div class="metrica"><strong>${totais["nao-aplicavel"]}</strong><span>Não aplicável</span></div>
+          <div class="metrica"><strong>${totais.aprovado}</strong><span>Sem gap declarado</span></div>
+          <div class="metrica"><strong>${totais.falha}</strong><span>Gap identificado</span></div>
+          <div class="metrica"><strong>${totais["precisa-evidencia"]}</strong><span>Evidência pendente</span></div>
+          <div class="metrica"><strong>${totais["nao-aplicavel"]}</strong><span>Fora de escopo</span></div>
         `;
         $("#listaRelatorio").innerHTML = itens
           .map(
@@ -1668,9 +1874,12 @@
                 <p>${item.motivo}</p>
                 <div class="metadados">
                   <div><strong>Evidência esperada</strong><br>${item.evidencia}</div>
-                  <div><strong>Risco de reviewer</strong><br>${item.risco}</div>
+                  <div><strong>Estado da evidência</strong><br>${item.estadoEvidencia}</div>
+                  <div><strong>Risco estimado para assessment</strong><br>${rotulosPrioridade[item.prioridade]}</div>
+                  <div><strong>Dono sugerido</strong><br>${donoSugerido(item, item.status)}</div>
+                  <div><strong>Esforço estimado</strong><br>${esforcoEstimado(item.prioridade, item.status)}</div>
+                  <div><strong>Prazo sugerido</strong><br>ilustrativo: ${prazoSugerido(item.prioridade, item.status)}</div>
                   <div><strong>Próxima ação</strong><br>${item.proximaAcao}</div>
-                  <div><strong>Resposta atual</strong><br>${rotulosResposta[item.resposta]}</div>
                 </div>
               </article>
             `,
@@ -1682,6 +1891,16 @@
               <div class="pergunta-cliente">
                 <strong>${item.titulo}</strong>
                 <span>${item.pergunta}</span>
+              </div>
+            `,
+          )
+          .join("");
+        $("#timelineSimulada").innerHTML = timelineParaResumo(resumo)
+          .map(
+            ([marco, descricao]) => `
+              <div class="marco">
+                <strong>${marco}</strong>
+                <span>${descricao}</span>
               </div>
             `,
           )
@@ -1722,22 +1941,32 @@
           `Tipo de FTR: ${nomeCaminho}`,
           `Modelo: ${textoSelecionado("modeloSolucao")}`,
           `Escopo: ${textoSelecionado("escopoDeclarado")}`,
-          `Readiness estimado: ${resumo.readiness}%`,
+          `Cobertura declarada: ${resumo.readiness}% das respostas positivas no checklist`,
           `Gaps bloqueadores: ${resumo.bloqueadores}`,
           `Evidências pendentes: ${resumo.pendentes}`,
           "",
           `Recomendação: ${resumo.recomendacao}`,
+          `Próximo passo recomendado: ${resumo.proximoPasso}`,
           "",
           "## Controles",
           ...itens.map(
             (item) =>
-              `- ${item.titulo}: ${rotulosStatus[item.status]} | prioridade: ${rotulosPrioridade[item.prioridade]} | próxima ação: ${item.proximaAcao}`,
+              `- ${item.titulo}: evidência ${item.estadoEvidencia} | risco estimado para assessment: ${rotulosPrioridade[item.prioridade]} | dono: ${donoSugerido(item, item.status)} | esforço ilustrativo: ${esforcoEstimado(item.prioridade, item.status)} | prazo ilustrativo: ${prazoSugerido(item.prioridade, item.status)} | próxima ação: ${item.proximaAcao}`,
           ),
           "",
           "## Perguntas para o cliente",
           ...perguntasParaCliente(itens).map((item) => `- ${item.pergunta}`),
           "",
-          "Observação: este relatório é uma simulação para discovery. Não substitui evidência determinística, revisão humana ou aprovação da AWS.",
+          "## Quem faz o quê",
+          "- Cliente: confirma escopo, fornece evidências e aponta donos internos.",
+          "- Consultoria: conduz intake, revisa evidências, prioriza gaps e monta plano de ação.",
+          "- Potencial de automação: pontos técnicos que poderiam ser validados por integração AWS em uma etapa futura.",
+          "- PSA/reviewer: confirma suficiência das evidências e orienta ajustes para submissão.",
+          "",
+          "## Timeline simulada",
+          ...timelineParaResumo(resumo).map(([marco, descricao]) => `- ${marco}: ${descricao}`),
+          "",
+          "Observação: este relatório é uma simulação para discovery. A cobertura declarada não substitui evidência determinística, revisão humana ou aprovação da AWS.",
         ];
         return linhas.join("\n");
       }
