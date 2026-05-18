@@ -1,0 +1,1503 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Simulador de Assessment FTR</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --texto: #17202c;
+        --texto-suave: #526171;
+        --linha: #d8e0e8;
+        --fundo: #f3f6f8;
+        --painel: #ffffff;
+        --azul: #24415f;
+        --azul-escuro: #111c29;
+        --verde: #168477;
+        --verde-escuro: #0e625b;
+        --amarelo: #a76800;
+        --vermelho: #b83a30;
+        --ok: #15703a;
+        --neutro: #596575;
+        --sombra: 0 22px 55px rgba(20, 32, 46, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        overflow-x: hidden;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(243, 246, 248, 0.94)),
+          repeating-linear-gradient(90deg, rgba(36, 65, 95, 0.04) 0 1px, transparent 1px 80px),
+          var(--fundo);
+        color: var(--texto);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        line-height: 1.42;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      button {
+        border: 0;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+
+      .aplicacao {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 304px minmax(0, 1fr);
+      }
+
+      .lateral {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        min-width: 0;
+        overflow: auto;
+        padding: 26px 24px;
+        background: linear-gradient(180deg, #111c29 0%, #172637 100%);
+        color: #f7fafc;
+      }
+
+      .marca {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+
+      .sobretitulo {
+        color: #37b3a6;
+        font-size: 0.76rem;
+        font-weight: 850;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .marca h1 {
+        margin: 0;
+        font-size: 1.48rem;
+        line-height: 1.08;
+        letter-spacing: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .marca p,
+      .nota-lateral {
+        margin: 0;
+        color: #c9d5df;
+        font-size: 0.9rem;
+        overflow-wrap: anywhere;
+      }
+
+      .navegacao {
+        display: grid;
+        gap: 9px;
+        margin: 24px 0;
+      }
+
+      .navegacao button {
+        min-height: 46px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        align-items: center;
+        gap: 11px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: transparent;
+        color: #dbe5ee;
+        text-align: left;
+      }
+
+      .navegacao button.ativo {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        box-shadow: inset 3px 0 0 #37b3a6;
+      }
+
+      .numero {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.11);
+        font-size: 0.82rem;
+        font-weight: 850;
+      }
+
+      .nota-lateral {
+        padding: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 8px;
+      }
+
+      .medidor {
+        margin-top: 18px;
+        display: grid;
+        gap: 9px;
+      }
+
+      .medidor-cabecalho {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: #dce8f1;
+        font-size: 0.82rem;
+        font-weight: 760;
+      }
+
+      .barra {
+        height: 9px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+        overflow: hidden;
+      }
+
+      .barra span {
+        display: block;
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        background: #37b3a6;
+        transition: width 180ms ease;
+      }
+
+      main {
+        min-width: 0;
+        padding: 26px;
+        overflow: hidden;
+      }
+
+      .topo {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: start;
+        margin-bottom: 18px;
+      }
+
+      .titulo {
+        display: grid;
+        gap: 7px;
+      }
+
+      .titulo h2 {
+        margin: 0;
+        max-width: 900px;
+        font-size: clamp(1.72rem, 2.6vw, 2.45rem);
+        line-height: 1.06;
+        letter-spacing: 0;
+      }
+
+      .titulo p {
+        margin: 0;
+        max-width: 820px;
+        color: var(--texto-suave);
+        font-size: 1rem;
+        overflow-wrap: anywhere;
+      }
+
+      .acoes-topo {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .selo,
+      .botao-primario,
+      .botao-secundario,
+      .botao-fantasma {
+        min-height: 42px;
+        border-radius: 8px;
+        padding: 10px 13px;
+        font-weight: 780;
+      }
+
+      .selo {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #b8c7d6;
+        background: rgba(255, 255, 255, 0.82);
+        color: #2c3d4f;
+        white-space: nowrap;
+      }
+
+      .botao-primario {
+        background: var(--verde);
+        color: #ffffff;
+      }
+
+      .botao-primario:hover {
+        background: var(--verde-escuro);
+      }
+
+      .botao-secundario {
+        border: 1px solid #becbd8;
+        background: #ffffff;
+        color: #304052;
+      }
+
+      .botao-fantasma {
+        background: #ecf2f6;
+        color: #2f4052;
+      }
+
+      .grade {
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(380px, 1.08fr);
+        gap: 18px;
+        align-items: start;
+      }
+
+      .painel {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid var(--linha);
+        border-radius: 8px;
+        box-shadow: var(--sombra);
+        overflow: hidden;
+      }
+
+      .painel-destaque {
+        border-top: 5px solid var(--verde);
+      }
+
+      .cabecalho-painel {
+        padding: 18px 18px 0;
+      }
+
+      .cabecalho-painel h3 {
+        margin: 0;
+        font-size: 1.03rem;
+        letter-spacing: 0;
+      }
+
+      .cabecalho-painel p {
+        margin: 6px 0 0;
+        color: var(--texto-suave);
+        font-size: 0.92rem;
+      }
+
+      .corpo-painel {
+        padding: 18px;
+      }
+
+      .formulario {
+        display: grid;
+        gap: 15px;
+      }
+
+      .campo {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: #f8fafc;
+      }
+
+      .campo.realce-guia {
+        border-color: var(--verde);
+        box-shadow: 0 0 0 4px rgba(22, 132, 119, 0.14);
+      }
+
+      .linha-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .linha-label label,
+      .titulo-check {
+        color: #253243;
+        font-size: 0.84rem;
+        font-weight: 780;
+      }
+
+      .ajuda {
+        width: 28px;
+        height: 28px;
+        flex: 0 0 auto;
+        border: 1px solid #b9c8d6;
+        border-radius: 999px;
+        background: #ffffff;
+        color: var(--azul);
+        font-weight: 900;
+      }
+
+      input,
+      select {
+        width: 100%;
+        min-height: 44px;
+        border: 1px solid #bccbd8;
+        border-radius: 8px;
+        background: #ffffff;
+        color: var(--texto);
+        padding: 10px 12px;
+      }
+
+      input:focus,
+      select:focus {
+        outline: 3px solid rgba(22, 132, 119, 0.18);
+        border-color: var(--verde);
+      }
+
+      .estado-campo {
+        color: var(--texto-suave);
+        font-size: 0.79rem;
+        font-weight: 690;
+      }
+
+      .estado-campo.ok {
+        color: var(--ok);
+      }
+
+      .segmentado {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .segmento {
+        min-height: 74px;
+        border: 1px solid #bfccd8;
+        border-radius: 8px;
+        background: #ffffff;
+        color: var(--texto);
+        padding: 11px;
+        text-align: left;
+        display: grid;
+        gap: 4px;
+      }
+
+      .segmento strong {
+        font-size: 0.94rem;
+      }
+
+      .segmento span {
+        color: var(--texto-suave);
+        font-size: 0.82rem;
+      }
+
+      .segmento.ativo {
+        border-color: var(--verde);
+        background: #e9f6f3;
+        box-shadow: inset 0 0 0 2px rgba(22, 132, 119, 0.18);
+      }
+
+      .resumo-caminhos,
+      .placar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .cartao-caminho,
+      .metrica {
+        border: 1px solid var(--linha);
+        border-radius: 8px;
+        padding: 14px;
+        background: #f8fafc;
+      }
+
+      .cartao-caminho.selecionado {
+        border-color: var(--verde);
+        background: #e9f6f3;
+      }
+
+      .cartao-caminho h4,
+      .notas h4 {
+        margin: 0;
+        font-size: 0.96rem;
+      }
+
+      .cartao-caminho p {
+        margin: 8px 0 0;
+        color: var(--texto-suave);
+        font-size: 0.86rem;
+      }
+
+      .notas {
+        margin-top: 16px;
+        padding-top: 15px;
+        border-top: 1px solid var(--linha);
+        display: grid;
+        gap: 8px;
+      }
+
+      .notas ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--texto-suave);
+        font-size: 0.88rem;
+      }
+
+      .notas li + li {
+        margin-top: 4px;
+      }
+
+      .tela {
+        display: none;
+      }
+
+      .tela.ativa {
+        display: block;
+      }
+
+      .checks,
+      .relatorio {
+        display: grid;
+        gap: 10px;
+      }
+
+      .check,
+      .resultado {
+        border: 1px solid var(--linha);
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 13px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .check-topo,
+      .resultado-topo {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .check-topo p,
+      .resultado p {
+        margin: 4px 0 0;
+        color: var(--texto-suave);
+        font-size: 0.84rem;
+      }
+
+      .opcoes-check {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .opcao {
+        min-height: 38px;
+        border: 1px solid #c6d2dd;
+        border-radius: 8px;
+        background: #f8fafc;
+        color: #344456;
+        font-size: 0.82rem;
+        font-weight: 760;
+      }
+
+      .opcao.ativa[data-valor="sim"] {
+        background: #e6f4ec;
+        border-color: #8fc7a3;
+        color: var(--ok);
+      }
+
+      .opcao.ativa[data-valor="nao"] {
+        background: #fff0ed;
+        border-color: #e0a19a;
+        color: var(--vermelho);
+      }
+
+      .opcao.ativa[data-valor="desconhecido"] {
+        background: #eef2f7;
+        border-color: #aebcca;
+        color: var(--neutro);
+      }
+
+      .metrica {
+        background: #ffffff;
+      }
+
+      .metrica strong {
+        display: block;
+        font-size: 1.55rem;
+        line-height: 1;
+      }
+
+      .metrica span {
+        color: var(--texto-suave);
+        font-size: 0.78rem;
+        font-weight: 780;
+      }
+
+      .resultado {
+        border-left-width: 5px;
+      }
+
+      .resultado.aprovado {
+        border-left-color: var(--ok);
+      }
+
+      .resultado.falha {
+        border-left-color: var(--vermelho);
+      }
+
+      .resultado.precisa-evidencia {
+        border-left-color: var(--amarelo);
+      }
+
+      .resultado.nao-aplicavel {
+        border-left-color: var(--neutro);
+      }
+
+      .resultado h4 {
+        margin: 0;
+        font-size: 0.96rem;
+      }
+
+      .etiqueta {
+        align-self: start;
+        border-radius: 999px;
+        padding: 5px 9px;
+        white-space: nowrap;
+        font-size: 0.72rem;
+        font-weight: 860;
+        text-transform: uppercase;
+      }
+
+      .etiqueta.aprovado {
+        background: #e6f4ec;
+        color: var(--ok);
+      }
+
+      .etiqueta.falha {
+        background: #fff0ed;
+        color: var(--vermelho);
+      }
+
+      .etiqueta.precisa-evidencia {
+        background: #fff5dd;
+        color: var(--amarelo);
+      }
+
+      .etiqueta.nao-aplicavel {
+        background: #eef2f7;
+        color: var(--neutro);
+      }
+
+      .metadados {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .metadados div {
+        min-width: 0;
+        padding: 9px;
+        border-radius: 8px;
+        background: #f6f8fa;
+        color: #4c5b6b;
+        font-size: 0.8rem;
+        overflow-wrap: anywhere;
+      }
+
+      .acoes {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      .aviso-formulario {
+        margin-top: 10px;
+        color: var(--amarelo);
+        font-size: 0.86rem;
+        font-weight: 730;
+      }
+
+      .modal-fundo {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: none;
+        place-items: center;
+        padding: 18px;
+        background: rgba(12, 20, 30, 0.58);
+      }
+
+      .modal-fundo.aberto {
+        display: grid;
+      }
+
+      .modal {
+        width: min(560px, 100%);
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+        border: 1px solid #d7e0e8;
+      }
+
+      .modal-conteudo {
+        padding: 22px;
+        display: grid;
+        gap: 13px;
+      }
+
+      .modal h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .modal p {
+        margin: 0;
+        color: var(--texto-suave);
+      }
+
+      .modal .pergunta {
+        padding: 12px;
+        border-radius: 8px;
+        background: #f4f8fb;
+        color: #2e4256;
+        font-weight: 720;
+      }
+
+      .modal-acoes {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 1000px) {
+        .aplicacao {
+          grid-template-columns: 1fr;
+        }
+
+        .lateral {
+          position: static;
+          height: auto;
+        }
+
+        .navegacao {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .grade {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        main {
+          padding: 16px;
+        }
+
+        .topo,
+        .check-topo,
+        .resultado-topo {
+          grid-template-columns: 1fr;
+          display: grid;
+        }
+
+        .acoes-topo {
+          justify-content: flex-start;
+        }
+
+        .navegacao,
+        .segmentado,
+        .resumo-caminhos,
+        .placar,
+        .metadados,
+        .opcoes-check {
+          grid-template-columns: 1fr;
+        }
+
+        .selo {
+          white-space: normal;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="aplicacao">
+      <aside class="lateral">
+        <div class="marca">
+          <div class="sobretitulo">Foreman demo</div>
+          <h1>Simulador de Assessment FTR</h1>
+          <p>Fluxo visual para validar intake, evidências e gaps antes de construir automação real.</p>
+        </div>
+
+        <nav class="navegacao" aria-label="Fluxo do simulador">
+          <button class="ativo" data-tela-alvo="intake">
+            <span class="numero">1</span>
+            <span>Intake guiado</span>
+          </button>
+          <button data-tela-alvo="checklist">
+            <span class="numero">2</span>
+            <span>Checklist</span>
+          </button>
+          <button data-tela-alvo="relatorio">
+            <span class="numero">3</span>
+            <span>Relatório de gaps</span>
+          </button>
+        </nav>
+
+        <div class="nota-lateral">
+          Este protótipo não conecta em conta AWS e não promete aprovação FTR.
+          Evidência ausente continua sendo lacuna.
+        </div>
+
+        <div class="medidor" aria-label="Progresso do intake">
+          <div class="medidor-cabecalho">
+            <span>Intake obrigatório</span>
+            <span id="textoProgresso">0/5</span>
+          </div>
+          <div class="barra"><span id="barraProgresso"></span></div>
+        </div>
+      </aside>
+
+      <main>
+        <div class="topo">
+          <div class="titulo">
+            <div class="sobretitulo" id="rotuloModo">Partner Hosted</div>
+            <h2 id="tituloPagina">Intake guiado do assessment</h2>
+            <p id="subtituloPagina">
+              Cada campo explica por que existe e só libera o fluxo quando a informação mínima foi preenchida.
+            </p>
+          </div>
+          <div class="acoes-topo">
+            <button class="botao-secundario" id="iniciarTour">Iniciar tour guiado</button>
+            <span class="selo">Protótipo de discovery, não aprovação FTR</span>
+          </div>
+        </div>
+
+        <section class="tela ativa" id="intake">
+          <div class="grade">
+            <div class="painel painel-destaque">
+              <div class="cabecalho-painel">
+                <h3>Perfil da solução</h3>
+                <p>Preencha o mínimo necessário para simular o caminho de FTR.</p>
+              </div>
+              <div class="corpo-painel formulario">
+                <div class="campo" data-campo="nomeSolucao">
+                  <div class="linha-label">
+                    <label for="nomeSolucao">Nome da solução</label>
+                    <button class="ajuda" aria-label="Ajuda sobre nome da solução" data-ajuda="nomeSolucao">?</button>
+                  </div>
+                  <input id="nomeSolucao" placeholder="Ex.: Plataforma de cobrança SaaS" autocomplete="off" />
+                  <div class="estado-campo" data-estado="nomeSolucao">Obrigatório para identificar o relatório.</div>
+                </div>
+
+                <div class="campo" data-campo="caminhoFtr">
+                  <div class="linha-label">
+                    <label>Tipo de FTR</label>
+                    <button class="ajuda" aria-label="Ajuda sobre tipo de FTR" data-ajuda="caminhoFtr">?</button>
+                  </div>
+                  <div class="segmentado" role="group" aria-label="Tipo de FTR">
+                    <button class="segmento ativo" data-caminho="partner">
+                      <strong>Partner Hosted</strong>
+                      <span>Conta AWS, postura técnica e evidência operacional.</span>
+                    </button>
+                    <button class="segmento" data-caminho="service">
+                      <strong>Service Offering</strong>
+                      <span>Processo, entrega, acesso seguro e evidência de cliente.</span>
+                    </button>
+                  </div>
+                  <div class="estado-campo" data-estado="caminhoFtr">Escolha um caminho para calibrar o checklist.</div>
+                </div>
+
+                <div class="campo" data-campo="modeloSolucao">
+                  <div class="linha-label">
+                    <label for="modeloSolucao">Modelo da solução</label>
+                    <button class="ajuda" aria-label="Ajuda sobre modelo da solução" data-ajuda="modeloSolucao">?</button>
+                  </div>
+                  <select id="modeloSolucao">
+                    <option value="">Selecione o modelo</option>
+                    <option value="saas">SaaS ou workload hospedado</option>
+                    <option value="managed">Serviço gerenciado</option>
+                    <option value="consulting">Consultoria ou serviço profissional</option>
+                    <option value="hybrid">Software e serviço combinados</option>
+                  </select>
+                  <div class="estado-campo" data-estado="modeloSolucao">Ajuda a separar automação técnica de evidência processual.</div>
+                </div>
+
+                <div class="campo" data-campo="escopoDeclarado">
+                  <div class="linha-label">
+                    <label for="escopoDeclarado">Escopo declarado</label>
+                    <button class="ajuda" aria-label="Ajuda sobre escopo declarado" data-ajuda="escopoDeclarado">?</button>
+                  </div>
+                  <select id="escopoDeclarado">
+                    <option value="">Selecione o estado do escopo</option>
+                    <option value="claro">Contas, regiões e workloads declarados</option>
+                    <option value="parcial">Escopo parcialmente declarado</option>
+                    <option value="ausente">Escopo ainda não declarado</option>
+                  </select>
+                  <div class="estado-campo" data-estado="escopoDeclarado">Sem escopo não existe readiness confiável.</div>
+                </div>
+
+                <div class="campo" data-campo="maturidadeEvidencia">
+                  <div class="linha-label">
+                    <label for="maturidadeEvidencia">Maturidade das evidências</label>
+                    <button class="ajuda" aria-label="Ajuda sobre maturidade das evidências" data-ajuda="maturidadeEvidencia">?</button>
+                  </div>
+                  <select id="maturidadeEvidencia">
+                    <option value="">Selecione a maturidade</option>
+                    <option value="forte">A maior parte das evidências está pronta</option>
+                    <option value="mista">Há evidências, mas existem lacunas</option>
+                    <option value="fraca">Evidências iniciais ou espalhadas</option>
+                  </select>
+                  <div class="estado-campo" data-estado="maturidadeEvidencia">Define o cenário inicial do checklist simulado.</div>
+                </div>
+
+                <div class="acoes">
+                  <button class="botao-primario" id="continuarChecklist" data-ir="checklist" disabled>
+                    Continuar para o checklist
+                  </button>
+                  <button class="botao-secundario" id="reiniciarDemo">Reiniciar simulação</button>
+                </div>
+                <div class="aviso-formulario" id="avisoFormulario">
+                  Preencha os cinco campos do intake para liberar o checklist.
+                </div>
+              </div>
+            </div>
+
+            <div class="painel">
+              <div class="cabecalho-painel">
+                <h3>Prévia de roteamento</h3>
+                <p>O mesmo core de assessment, duas formas diferentes de evidência.</p>
+              </div>
+              <div class="corpo-painel">
+                <div class="resumo-caminhos">
+                  <div class="cartao-caminho selecionado" data-cartao-caminho="partner">
+                    <h4>Partner Hosted</h4>
+                    <p>Maior potencial de automação futura: APIs AWS, CIS, Security Hub, configuração e snapshots.</p>
+                  </div>
+                  <div class="cartao-caminho" data-cartao-caminho="service">
+                    <h4>Service Offering</h4>
+                    <p>Maior valor em workflow assistido: SoW, processo, governança, acesso e feedback do cliente.</p>
+                  </div>
+                </div>
+
+                <div class="notas">
+                  <h4>O que validar com o cliente</h4>
+                  <ul>
+                    <li>Qual tipo de FTR representa melhor a solução ou oferta avaliada.</li>
+                    <li>Quais evidências o cliente já tem e quais ainda precisam ser produzidas.</li>
+                    <li>Onde o processo trava hoje: scan, escrita, diagrama, evidência ou Partner Central.</li>
+                    <li>Quais gaps parecem mais críticos antes de envolver reviewer ou PSA.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tela" id="checklist">
+          <div class="grade">
+            <div class="painel painel-destaque">
+              <div class="cabecalho-painel">
+                <h3 id="tituloChecklist">Checklist Partner Hosted</h3>
+                <p>As respostas simulam o estado de evidência por controle.</p>
+              </div>
+              <div class="corpo-painel">
+                <div class="checks" id="listaChecks"></div>
+                <div class="acoes">
+                  <button class="botao-primario" data-ir="relatorio">Gerar relatório de gaps</button>
+                  <button class="botao-secundario" data-ir="intake">Voltar ao intake</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="painel">
+              <div class="cabecalho-painel">
+                <h3>Contexto do assessment</h3>
+                <p>Resumo do que foi informado no intake.</p>
+              </div>
+              <div class="corpo-painel">
+                <div class="metadados" id="resumoContexto"></div>
+                <div class="notas">
+                  <h4>Limite de interpretação</h4>
+                  <ul>
+                    <li>Resposta manual sem evidência continua como “precisa de evidência”.</li>
+                    <li>Automação futura precisa preservar snapshot e versão do check.</li>
+                    <li>Service Offering depende de revisão humana explícita.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tela" id="relatorio">
+          <div class="grade">
+            <div class="painel painel-destaque">
+              <div class="cabecalho-painel">
+                <h3>Relatório de gaps simulado</h3>
+                <p id="subtituloRelatorio">Snapshot de readiness para discussão.</p>
+              </div>
+              <div class="corpo-painel relatorio">
+                <div class="placar" id="placar"></div>
+                <div class="relatorio" id="listaRelatorio"></div>
+              </div>
+            </div>
+
+            <div class="painel">
+              <div class="cabecalho-painel">
+                <h3>Roteiro para a reunião</h3>
+                <p>Perguntas que a demo deve provocar.</p>
+              </div>
+              <div class="corpo-painel">
+                <div class="notas" style="margin-top: 0; padding-top: 0; border-top: 0">
+                  <h4>Validar processo real</h4>
+                  <ul>
+                    <li>Esse status ajuda antes de falar com o PSA?</li>
+                    <li>Qual evidência está faltando que a AWS sempre pede?</li>
+                    <li>Qual controle está simplificado demais para o mundo real?</li>
+                    <li>O primeiro valor pago seria gap report, plano, workspace ou pacote?</li>
+                  </ul>
+                </div>
+                <div class="notas">
+                  <h4>Não objetivos desta demo</h4>
+                  <ul>
+                    <li>Não conecta em conta AWS.</li>
+                    <li>Não gera pacote final de submissão.</li>
+                    <li>Não promete aprovação FTR.</li>
+                    <li>Não substitui evidência determinística ou revisão humana.</li>
+                  </ul>
+                </div>
+                <div class="acoes">
+                  <button class="botao-secundario" data-ir="checklist">Ajustar respostas</button>
+                  <button class="botao-secundario" data-ir="intake">Simular outro caminho</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-fundo" id="fundoModal" role="dialog" aria-modal="true" aria-labelledby="tituloModal">
+      <div class="modal">
+        <div class="modal-conteudo">
+          <div class="sobretitulo" id="passoModal">Tour guiado</div>
+          <h3 id="tituloModal">Campo do intake</h3>
+          <p id="textoModal">Explicação do campo.</p>
+          <div class="pergunta" id="perguntaModal">Preencha este campo para continuar.</div>
+          <div class="modal-acoes">
+            <button class="botao-secundario" id="fecharModal">Fechar</button>
+            <button class="botao-primario" id="acaoModal">Preencher este campo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const catalogo = {
+        partner: [
+          {
+            id: "ph-escopo",
+            titulo: "Escopo AWS declarado",
+            pergunta: "Contas, regiões e workloads de produção estão explícitos.",
+            evidencia: "Lista de contas, regiões, workloads e exclusões",
+            risco: "Alto se contas ou regiões omitidas aparecerem depois",
+            proximaAcao: "Confirmar dono do escopo e anexar inventário de contas e regiões",
+          },
+          {
+            id: "ph-cis",
+            titulo: "Postura CIS ou Security Hub",
+            pergunta: "Existe evidência recente de CIS ou Security Hub para as contas em escopo.",
+            evidencia: "Export do Security Hub/CIS com timestamp e cobertura de contas",
+            risco: "Alto se a cobertura do scan não puder ser provada",
+            proximaAcao: "Coletar relatório atual e metadados de cobertura",
+          },
+          {
+            id: "ph-logs",
+            titulo: "Baseline de auditoria e logs",
+            pergunta: "CloudTrail e logging operacional podem ser evidenciados.",
+            evidencia: "Snapshot de CloudTrail/configuração ou evidência equivalente",
+            risco: "Médio se logging existe, mas retenção ou escopo estão incertos",
+            proximaAcao: "Mapear evidência de logging para cada conta em escopo",
+          },
+          {
+            id: "ph-dados",
+            titulo: "Proteção de dados",
+            pergunta: "Criptografia, backup e tratamento de dados sensíveis estão evidenciados.",
+            evidencia: "Configurações de criptografia, política de backup e fluxo de dados",
+            risco: "Médio se há apenas política escrita sem prova de recurso",
+            proximaAcao: "Anexar snapshots determinísticos de recursos quando possível",
+          },
+          {
+            id: "ph-diagrama",
+            titulo: "Diagrama de arquitetura",
+            pergunta: "O diagrama de arquitetura bate com o escopo AWS declarado.",
+            evidencia: "Diagrama atual e descrição do workload",
+            risco: "Alto se o diagrama contradiz o escopo do scan",
+            proximaAcao: "Alinhar diagrama, descrição do workload e contas declaradas",
+          },
+        ],
+        service: [
+          {
+            id: "so-escopo",
+            titulo: "Escopo e modelo de entrega",
+            pergunta: "A oferta tem SoW, limites e ciclo de entrega claros.",
+            evidencia: "Modelo de SoW, plano de entrega e matriz de responsabilidades",
+            risco: "Alto se o serviço parecer genérico ou sem fronteiras",
+            proximaAcao: "Anexar SoW concreto ou plano de entrega anonimizado",
+          },
+          {
+            id: "so-expertise",
+            titulo: "Evidência de expertise AWS",
+            pergunta: "Papéis, expertise da equipe e escalonamento estão documentados.",
+            evidencia: "Certificações, papéis de entrega e processo de escalonamento",
+            risco: "Médio se expertise é apenas declarada",
+            proximaAcao: "Mapear papéis para artefatos reais de entrega",
+          },
+          {
+            id: "so-risco",
+            titulo: "Processo de risco e qualidade",
+            pergunta: "Gestão de risco, revisão e qualidade possuem gates definidos.",
+            evidencia: "Registro de riscos, checklist de revisão e fluxo de aceite",
+            risco: "Alto se não há controle repetível de entrega",
+            proximaAcao: "Apresentar workflow repetível de qualidade do engagement",
+          },
+          {
+            id: "so-acesso",
+            titulo: "Acesso seguro à conta do cliente",
+            pergunta: "O modelo de acesso à conta do cliente é seguro e auditável.",
+            evidencia: "Padrão de acesso, menor privilégio e trilha de aprovação",
+            risco: "Alto se acesso depende de credenciais informais",
+            proximaAcao: "Definir modelo de acesso e evidenciar aprovações",
+          },
+          {
+            id: "so-feedback",
+            titulo: "Feedback e handover",
+            pergunta: "Feedback do cliente, handover e encerramento são capturados.",
+            evidencia: "Processo de feedback, checklist de handover e registro de fechamento",
+            risco: "Médio se outcomes de cliente não são registrados",
+            proximaAcao: "Anexar encerramento e feedback de engagements reais",
+          },
+        ],
+      };
+
+      const guia = [
+        {
+          id: "nomeSolucao",
+          titulo: "Nome da solução",
+          texto: "Identifica o assessment e ajuda a conversa a sair do abstrato. Em um produto real, esse nome viraria parte do histórico e dos relatórios.",
+          pergunta: "Qual solução, workload ou oferta será avaliada nesta simulação?",
+        },
+        {
+          id: "caminhoFtr",
+          titulo: "Tipo de FTR",
+          texto: "O tipo muda completamente o que pode ser automatizado. Partner Hosted puxa evidência técnica; Service Offering puxa evidência de processo e entrega.",
+          pergunta: "Esta conversa deve simular uma solução hospedada pelo partner ou uma oferta de serviço?",
+        },
+        {
+          id: "modeloSolucao",
+          titulo: "Modelo da solução",
+          texto: "O modelo evita misturar scanner técnico com evidência de serviço. Ele também ajuda o cliente a corrigir o roteamento se a realidade for híbrida.",
+          pergunta: "Como esta solução é vendida ou entregue?",
+        },
+        {
+          id: "escopoDeclarado",
+          titulo: "Escopo declarado",
+          texto: "Sem escopo explícito, qualquer status de readiness é frágil. Contas, regiões, workloads e exclusões precisam estar claros antes de confiar no resultado.",
+          pergunta: "O escopo já está claro ou ainda precisa ser descoberto?",
+        },
+        {
+          id: "maturidadeEvidencia",
+          titulo: "Maturidade das evidências",
+          texto: "Este campo define o cenário inicial do checklist. Ele não aprova nada; apenas simula se a conversa começa com evidências fortes, mistas ou fracas.",
+          pergunta: "Quão prontas estão as evidências hoje?",
+        },
+      ];
+
+      const rotulosResposta = {
+        sim: "Pronto",
+        nao: "Ausente",
+        desconhecido: "Desconhecido",
+      };
+
+      const rotulosStatus = {
+        aprovado: "aprovado",
+        falha: "falha",
+        "precisa-evidencia": "precisa de evidência",
+        "nao-aplicavel": "não aplicável",
+      };
+
+      const estado = {
+        tela: "intake",
+        caminho: "partner",
+        respostas: {},
+        preenchidos: new Set(),
+        guiaAtivo: false,
+        passoGuia: 0,
+        suprimirAjudaFoco: "",
+      };
+
+      const $ = (seletor) => document.querySelector(seletor);
+      const $$ = (seletor) => Array.from(document.querySelectorAll(seletor));
+
+      function valorCampo(id) {
+        if (id === "caminhoFtr") return estado.caminho;
+        const elemento = document.getElementById(id);
+        return elemento ? elemento.value.trim() : "";
+      }
+
+      function campoValido(id) {
+        return Boolean(valorCampo(id));
+      }
+
+      function marcarPreenchido(id) {
+        if (campoValido(id)) estado.preenchidos.add(id);
+        atualizarValidacao();
+      }
+
+      function progressoIntake() {
+        return guia.filter((item) => estado.preenchidos.has(item.id) && campoValido(item.id)).length;
+      }
+
+      function intakeCompleto() {
+        return progressoIntake() === guia.length;
+      }
+
+      function atualizarValidacao() {
+        guia.forEach((item) => {
+          const estadoCampo = document.querySelector(`[data-estado="${item.id}"]`);
+          if (!estadoCampo) return;
+          const ok = estado.preenchidos.has(item.id) && campoValido(item.id);
+          estadoCampo.classList.toggle("ok", ok);
+          estadoCampo.textContent = ok ? "Campo preenchido para esta simulação." : mensagensEstado[item.id];
+        });
+
+        const total = progressoIntake();
+        $("#textoProgresso").textContent = `${total}/${guia.length}`;
+        $("#barraProgresso").style.width = `${(total / guia.length) * 100}%`;
+        $("#continuarChecklist").disabled = !intakeCompleto();
+        $("#avisoFormulario").textContent = intakeCompleto()
+          ? "Intake completo. O checklist está liberado."
+          : "Preencha os cinco campos do intake para liberar o checklist.";
+      }
+
+      const mensagensEstado = {
+        nomeSolucao: "Obrigatório para identificar o relatório.",
+        caminhoFtr: "Escolha um caminho para calibrar o checklist.",
+        modeloSolucao: "Ajuda a separar automação técnica de evidência processual.",
+        escopoDeclarado: "Sem escopo não existe readiness confiável.",
+        maturidadeEvidencia: "Define o cenário inicial do checklist simulado.",
+      };
+
+      function abrirModal(id, viaTour = false) {
+        const indice = guia.findIndex((item) => item.id === id);
+        if (indice < 0) return;
+        estado.passoGuia = indice;
+        estado.guiaAtivo = viaTour || estado.guiaAtivo;
+        const item = guia[indice];
+        $("#passoModal").textContent = `Campo ${indice + 1} de ${guia.length}`;
+        $("#tituloModal").textContent = item.titulo;
+        $("#textoModal").textContent = item.texto;
+        $("#perguntaModal").textContent = item.pergunta;
+        $("#acaoModal").textContent = campoValido(id) ? "Revisar campo" : "Preencher este campo";
+        $("#fundoModal").classList.add("aberto");
+        destacarCampo(id);
+      }
+
+      function fecharModal() {
+        $("#fundoModal").classList.remove("aberto");
+      }
+
+      function destacarCampo(id) {
+        $$(".campo").forEach((campo) => campo.classList.toggle("realce-guia", campo.dataset.campo === id));
+      }
+
+      function focarCampoAtual() {
+        const item = guia[estado.passoGuia];
+        fecharModal();
+        const alvo = document.querySelector(`[data-campo="${item.id}"]`);
+        alvo?.scrollIntoView({ block: "center" });
+        destacarCampo(item.id);
+        estado.suprimirAjudaFoco = item.id;
+        const controle = document.getElementById(item.id);
+        if (controle) controle.focus();
+      }
+
+      function proximoCampoPendente() {
+        return guia.find((item) => !estado.preenchidos.has(item.id) || !campoValido(item.id));
+      }
+
+      function continuarTourSeNecessario(id) {
+        if (!estado.guiaAtivo) return;
+        const indiceAtual = guia.findIndex((item) => item.id === id);
+        const proximo = guia.slice(indiceAtual + 1).find((item) => !estado.preenchidos.has(item.id) || !campoValido(item.id));
+        if (proximo) {
+          window.setTimeout(() => abrirModal(proximo.id, true), 250);
+        } else {
+          estado.guiaAtivo = false;
+          fecharModal();
+          destacarCampo("");
+          atualizarValidacao();
+        }
+      }
+
+      function iniciarTour() {
+        estado.guiaAtivo = true;
+        const pendente = proximoCampoPendente() || guia[0];
+        abrirModal(pendente.id, true);
+      }
+
+      function definirTela(tela) {
+        if (tela !== "intake" && !intakeCompleto()) {
+          iniciarTour();
+          return;
+        }
+        estado.tela = tela;
+        $$(".tela").forEach((el) => el.classList.toggle("ativa", el.id === tela));
+        $$("[data-tela-alvo]").forEach((botao) => {
+          botao.classList.toggle("ativo", botao.dataset.telaAlvo === tela);
+        });
+
+        const titulos = {
+          intake: [
+            "Intake guiado do assessment",
+            "Cada campo explica por que existe e só libera o fluxo quando a informação mínima foi preenchida.",
+          ],
+          checklist: [
+            "Checklist de evidências",
+            "Responda como se fosse um pré-assessment rápido para revelar gaps prováveis.",
+          ],
+          relatorio: [
+            "Relatório de gaps simulado",
+            "Resultado para provocar revisão do processo, não para declarar readiness final.",
+          ],
+        };
+        $("#tituloPagina").textContent = titulos[tela][0];
+        $("#subtituloPagina").textContent = titulos[tela][1];
+        renderizar();
+      }
+
+      function definirCaminho(caminho) {
+        estado.caminho = caminho;
+        estado.preenchidos.add("caminhoFtr");
+        if (!estado.respostas[caminho]) estado.respostas[caminho] = respostasPadrao(caminho);
+        $("#rotuloModo").textContent = caminho === "partner" ? "Partner Hosted" : "Service Offering";
+        $$("[data-caminho]").forEach((botao) => botao.classList.toggle("ativo", botao.dataset.caminho === caminho));
+        $$("[data-cartao-caminho]").forEach((cartao) => {
+          cartao.classList.toggle("selecionado", cartao.dataset.cartaoCaminho === caminho);
+        });
+        atualizarValidacao();
+        renderizar();
+        continuarTourSeNecessario("caminhoFtr");
+      }
+
+      function respostasPadrao(caminho) {
+        const maturidade = $("#maturidadeEvidencia")?.value || "mista";
+        const cenarios = {
+          forte: ["sim", "sim", "sim", "desconhecido", "sim"],
+          mista: ["sim", "desconhecido", "sim", "desconhecido", "nao"],
+          fraca: ["desconhecido", "nao", "desconhecido", "nao", "desconhecido"],
+        };
+        const valores = cenarios[maturidade] || cenarios.mista;
+        return Object.fromEntries(catalogo[caminho].map((item, indice) => [item.id, valores[indice]]));
+      }
+
+      function respostaParaStatus(resposta, item) {
+        if (resposta === "sim") return "aprovado";
+        if (resposta === "nao") return "falha";
+        if (item.id === "ph-diagrama" && $("#modeloSolucao").value === "consulting") return "nao-aplicavel";
+        return "precisa-evidencia";
+      }
+
+      function motivoStatus(status, resposta) {
+        if (status === "aprovado") return "A evidência parece pronta para discussão com reviewer.";
+        if (status === "falha") return "A resposta atual contradiz o estado esperado de readiness.";
+        if (status === "nao-aplicavel") return "Marcado fora de escopo pelo modelo selecionado.";
+        if (resposta === "desconhecido") return "Nenhuma evidência foi confirmada ainda.";
+        return "A evidência está incompleta ou não foi vinculada ao assessment.";
+      }
+
+      function resultados() {
+        const respostas = estado.respostas[estado.caminho] || respostasPadrao(estado.caminho);
+        return catalogo[estado.caminho].map((item) => {
+          const resposta = respostas[item.id] || "desconhecido";
+          const status = respostaParaStatus(resposta, item);
+          return { ...item, resposta, status, motivo: motivoStatus(status, resposta) };
+        });
+      }
+
+      function renderizarChecks() {
+        const nomeCaminho = estado.caminho === "partner" ? "Partner Hosted" : "Service Offering";
+        $("#tituloChecklist").textContent = `Checklist ${nomeCaminho}`;
+        $("#listaChecks").innerHTML = catalogo[estado.caminho]
+          .map((item) => {
+            const resposta = (estado.respostas[estado.caminho] || {})[item.id] || "desconhecido";
+            return `
+              <article class="check">
+                <div class="check-topo">
+                  <div>
+                    <div class="titulo-check">${item.titulo}</div>
+                    <p>${item.pergunta}</p>
+                  </div>
+                </div>
+                <div class="opcoes-check" role="group" aria-label="${item.titulo}">
+                  ${["sim", "desconhecido", "nao"]
+                    .map(
+                      (valor) => `
+                        <button class="opcao ${resposta === valor ? "ativa" : ""}" data-check="${item.id}" data-valor="${valor}">
+                          ${rotulosResposta[valor]}
+                        </button>
+                      `,
+                    )
+                    .join("")}
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+      }
+
+      function textoSelecionado(id) {
+        const el = document.getElementById(id);
+        return el?.selectedOptions?.[0]?.textContent || "Não informado";
+      }
+
+      function renderizarContexto() {
+        const nomeCaminho = estado.caminho === "partner" ? "Partner Hosted" : "Service Offering";
+        $("#resumoContexto").innerHTML = `
+          <div><strong>Solução</strong><br>${$("#nomeSolucao").value || "Não informada"}</div>
+          <div><strong>Tipo de FTR</strong><br>${nomeCaminho}</div>
+          <div><strong>Modelo</strong><br>${textoSelecionado("modeloSolucao")}</div>
+          <div><strong>Escopo</strong><br>${textoSelecionado("escopoDeclarado")}</div>
+        `;
+      }
+
+      function renderizarRelatorio() {
+        const itens = resultados();
+        const totais = itens.reduce(
+          (acc, item) => {
+            acc[item.status] += 1;
+            return acc;
+          },
+          { aprovado: 0, falha: 0, "precisa-evidencia": 0, "nao-aplicavel": 0 },
+        );
+
+        $("#subtituloRelatorio").textContent = `${$("#nomeSolucao").value || "Solução não informada"} - ${
+          estado.caminho === "partner" ? "Partner Hosted" : "Service Offering"
+        }`;
+        $("#placar").innerHTML = `
+          <div class="metrica"><strong>${totais.aprovado}</strong><span>Aprovado</span></div>
+          <div class="metrica"><strong>${totais.falha}</strong><span>Falha</span></div>
+          <div class="metrica"><strong>${totais["precisa-evidencia"]}</strong><span>Precisa de evidência</span></div>
+          <div class="metrica"><strong>${totais["nao-aplicavel"]}</strong><span>Não aplicável</span></div>
+        `;
+        $("#listaRelatorio").innerHTML = itens
+          .map(
+            (item) => `
+              <article class="resultado ${item.status}">
+                <div class="resultado-topo">
+                  <h4>${item.titulo}</h4>
+                  <span class="etiqueta ${item.status}">${rotulosStatus[item.status]}</span>
+                </div>
+                <p>${item.motivo}</p>
+                <div class="metadados">
+                  <div><strong>Evidência esperada</strong><br>${item.evidencia}</div>
+                  <div><strong>Risco de reviewer</strong><br>${item.risco}</div>
+                  <div><strong>Próxima ação</strong><br>${item.proximaAcao}</div>
+                  <div><strong>Resposta atual</strong><br>${rotulosResposta[item.resposta]}</div>
+                </div>
+              </article>
+            `,
+          )
+          .join("");
+      }
+
+      function renderizar() {
+        if (!estado.respostas.partner) estado.respostas.partner = respostasPadrao("partner");
+        if (!estado.respostas.service) estado.respostas.service = respostasPadrao("service");
+        renderizarChecks();
+        renderizarContexto();
+        renderizarRelatorio();
+        atualizarValidacao();
+      }
+
+      document.addEventListener("click", (evento) => {
+        const botao = evento.target.closest("button");
+        if (!botao) return;
+
+        if (botao.dataset.telaAlvo) definirTela(botao.dataset.telaAlvo);
+        if (botao.dataset.ir) definirTela(botao.dataset.ir);
+        if (botao.dataset.caminho) definirCaminho(botao.dataset.caminho);
+        if (botao.dataset.ajuda) abrirModal(botao.dataset.ajuda, false);
+        if (botao.dataset.check) {
+          estado.respostas[estado.caminho][botao.dataset.check] = botao.dataset.valor;
+          renderizar();
+        }
+      });
+
+      ["nomeSolucao", "modeloSolucao", "escopoDeclarado", "maturidadeEvidencia"].forEach((id) => {
+        const el = document.getElementById(id);
+        el.addEventListener("input", () => {
+          marcarPreenchido(id);
+          if (id === "maturidadeEvidencia") {
+            estado.respostas.partner = respostasPadrao("partner");
+            estado.respostas.service = respostasPadrao("service");
+          }
+          renderizar();
+        });
+        el.addEventListener("change", () => {
+          marcarPreenchido(id);
+          if (id === "maturidadeEvidencia") {
+            estado.respostas.partner = respostasPadrao("partner");
+            estado.respostas.service = respostasPadrao("service");
+          }
+          renderizar();
+          continuarTourSeNecessario(id);
+        });
+        el.addEventListener("blur", () => {
+          marcarPreenchido(id);
+          continuarTourSeNecessario(id);
+        });
+      });
+
+      $("#iniciarTour").addEventListener("click", iniciarTour);
+      $("#fecharModal").addEventListener("click", fecharModal);
+      $("#acaoModal").addEventListener("click", focarCampoAtual);
+      $("#fundoModal").addEventListener("click", (evento) => {
+        if (evento.target.id === "fundoModal") fecharModal();
+      });
+      document.addEventListener("keydown", (evento) => {
+        if (evento.key === "Escape") fecharModal();
+      });
+
+      $("#reiniciarDemo").addEventListener("click", () => {
+        $("#nomeSolucao").value = "";
+        $("#modeloSolucao").value = "";
+        $("#escopoDeclarado").value = "";
+        $("#maturidadeEvidencia").value = "";
+        estado.preenchidos.clear();
+        estado.respostas.partner = respostasPadrao("partner");
+        estado.respostas.service = respostasPadrao("service");
+        estado.guiaAtivo = false;
+        definirCaminho("partner");
+        definirTela("intake");
+      });
+
+      renderizar();
+    </script>
+  </body>
+</html>
